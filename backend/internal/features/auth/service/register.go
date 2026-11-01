@@ -16,10 +16,6 @@ import (
 func (s *AuthService) RegisterUser(ctx context.Context, user domain.User, password string) (*domain.User, error) {
 	user.ID = uuid.NewString()
 
-	if err := user.Validate(); err != nil {
-		return nil, fmt.Errorf("invalid user data: %w", domain.ErrInvalidRequest)
-	}
-
 	hash, err := hash_utils.HashPassword(password)
 	if err != nil {
 		return nil, fmt.Errorf("hash generating: %w", domain.ErrInternal)

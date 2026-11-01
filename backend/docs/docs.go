@@ -137,6 +137,10 @@ const docTemplate = `{
         },
         "internal_features_auth_transport_http.LoginDTO": {
             "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
             "properties": {
                 "email": {
                     "type": "string",
@@ -144,7 +148,7 @@ const docTemplate = `{
                 },
                 "password": {
                     "type": "string",
-                    "example": "somepass"
+                    "example": "hashpassword"
                 }
             }
         },
@@ -205,18 +209,14 @@ const docTemplate = `{
                     "x-order": "2",
                     "example": "m4rkek@gmail.com"
                 },
-                "password": {
-                    "type": "string",
-                    "x-order": "3"
-                },
                 "role": {
                     "type": "string",
-                    "x-order": "4",
+                    "x-order": "3",
                     "example": "user"
                 },
                 "createdAt": {
                     "type": "string",
-                    "x-order": "5",
+                    "x-order": "4",
                     "example": "2026-03-25T12:00:41.267Z"
                 }
             }

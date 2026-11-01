@@ -12,7 +12,7 @@ var AllowedRoles = []string{"admin", "user"}
 
 type User struct {
 	ID        string `validate:"required,uuid"`
-	Username  string `validate:"omitempty,min=4,max=15,username_validation"`
+	Username  string `validate:"min=4,max=15,username_validation"`
 	Email     string `validate:"email"`
 	Password  string
 	Role      string `validate:"oneof=admin user"`

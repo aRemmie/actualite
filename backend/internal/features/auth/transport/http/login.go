@@ -13,7 +13,7 @@ import (
 
 type LoginDTO struct {
 	Email    string `json:"email" example:"test.user@email.com" validate:"required"`
-	Password string `json:"password" example:"somepass" validate:"required"`
+	Password string `json:"password" example:"hashpassword" validate:"required"`
 }
 
 type LoginDTOResponse struct {
@@ -30,6 +30,7 @@ type LoginDTOResponse struct {
 // @Produce json
 // @Param request body LoginDTO true "тело запроса"
 // @Success 200 {object} LoginDTOResponse "Успешная авторизация"
+// @Failure 400 {object} domain.CustomError "Невалидный запрос"
 // @Failure 401 {object} domain.CustomError "Неверные учётные данные"
 // @Failure 500 {object} domain.InternalError "Внутренняя ошибка сервера"
 // @Router /login [post]

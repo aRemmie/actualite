@@ -10,4 +10,12 @@ tasks:
     desc: "Откатиться на одну миграцию назад"
     cmds:
       - docker compose run --rm db-migrations -path ./migrations -database postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db-postgres:5432/${POSTGRES_DB}?sslmode=disable down 1
+
+  create:
+    desc: "Создать миграцию"
+    requires:
+      vars:
+        - NAME
+    cmds:
+      - docker compose run --rm db-migrations create -ext sql -dir ./migrations -seq {{.NAME}}
       
