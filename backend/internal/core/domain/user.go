@@ -14,7 +14,7 @@ type User struct {
 	ID        string `validate:"required,uuid"`
 	Username  string `validate:"min=4,max=15,username_validation"`
 	Email     string `validate:"email"`
-	Password  string
+	Password  string `validate:"min=8,max=64,ascii"`
 	Role      string `validate:"oneof=admin user"`
 	AvatarURL string
 	Bio       string `validate:"omitempty,max=100"`

@@ -13,7 +13,7 @@ import (
 
 type LoginDTO struct {
 	Email    string `json:"email" example:"test.user@email.com" validate:"required"`
-	Password string `json:"password" example:"hashpassword" validate:"required"`
+	Password string `json:"password" example:"hashpassword" validate:"required,min=8,max=64,ascii"`
 }
 
 type LoginDTOResponse struct {

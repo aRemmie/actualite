@@ -16,7 +16,7 @@ import (
 type RegisterDTO struct {
 	Email    string `json:"email" validate:"required,email" example:"m4rkek@gmail.com" extensions:"x-order=0"`
 	Username string `json:"username" example:"m4rkek" extensions:"x-order=1"`
-	Password string `json:"password" validate:"required" example:"supersecretpass" extensions:"x-order=2"`
+	Password string `json:"password" validate:"required,min=8,max=64,ascii" example:"supersecretpass" extensions:"x-order=2"`
 	Role     string `json:"role" validate:"required" example:"admin" extensions:"x-order=3"`
 }
 
