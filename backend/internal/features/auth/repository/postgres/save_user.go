@@ -1,4 +1,4 @@
-package auth_repository
+package users_repository
 
 import (
 	"actualiteco/actualite/internal/core/domain"
@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-func (r *AuthRepository) SaveNewUser(ctx context.Context, user domain.User) (*domain.User, error) {
+func (r *UsersRepository) SaveNewUser(ctx context.Context, user domain.User) (domain.User, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
@@ -39,15 +39,8 @@ func (r *AuthRepository) SaveNewUser(ctx context.Context, user domain.User) (*do
 	)
 
 	if err != nil {
-		return nil, fmt.Errorf("scan returning user: %w", err)
+		return domain.User{}, fmt.Errorf("scan returning user: %w", err)
 	}
 
-	return &domain.User{
-		ID:        model.ID,
-		Username:  model.Username,
-		Email:     model.Email,
-		Password:  model.Password,
-		Role:      model.Role,
-		CreatedAt: model.CreatedAt,
-	}, nil
+	return auth_models.ToDomain(model), nil
 }

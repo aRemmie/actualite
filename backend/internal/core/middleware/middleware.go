@@ -1,15 +1,12 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 	"strings"
 	"time"
 
-	"actualiteco/actualite/internal/core/domain"
 	"actualiteco/actualite/internal/core/logger"
 	"actualiteco/actualite/internal/core/transport/response"
-	"actualiteco/actualite/internal/utils/jwt_utils"
 
 	"go.uber.org/zap"
 )
@@ -55,7 +52,7 @@ func LogMiddleware(log *logger.Logger) Middleware {
 
 			log := log.With(zap.String("URL", r.URL.String()))
 
-			ctx := context.WithValue(r.Context(), "log", log)
+			ctx := logger.InContext(r.Context(), log)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -87,7 +84,7 @@ func TraceMiddleware() Middleware {
 				return
 			}
 
-			log := r.Context().Value("log").(*logger.Logger)
+			log := logger.FromContext(r.Context())
 
 			before := time.Now()
 			log.Info(">>> incoming request", zap.String("METHOD", r.Method))
@@ -97,47 +94,6 @@ func TraceMiddleware() Middleware {
 			after := time.Now()
 
 			log.Info("<<< request handled", zap.Duration("latency", time.Duration(after.Sub(before))))
-		})
-	}
-}
-
-func AuthMiddleware() Middleware {
-	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			log := r.Context().Value("log").(*logger.Logger)
-			respWriter := response.NewResponseHandler(log, w)
-
-			token := r.Header.Get("Authorization")
-
-			if token == "" || !strings.HasPrefix(token, "Bearer") {
-				log.Debug("unathourized user", zap.String("Authorization", r.Header.Get("Authorization")))
-
-				respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusUnauthorized)
-				return
-			}
-
-			token = strings.TrimPrefix(token, "Bearer ")
-
-			claims, err := jwt_utils.VerifyJWTtoken(token)
-			if err != nil {
-				log.Debug("invalid token", zap.Any("claims", claims))
-
-				respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
-				return
-			}
-			log.Debug("user claims", zap.String("id", claims.UserId), zap.String("role", claims.Role))
-
-			if claims.ExpiresAt.Before(time.Now()) {
-				log.Debug("token expired", zap.Time("expiresAt", claims.ExpiresAt.Time))
-
-				respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
-				return
-			}
-
-			ctx := context.WithValue(r.Context(), "userId", claims.UserId)
-			ctx = context.WithValue(ctx, "role", claims.Role)
-
-			next.ServeHTTP(w, r.WithContext(ctx))
 		})
 	}
 }

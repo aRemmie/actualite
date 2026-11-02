@@ -17,9 +17,9 @@ type LoginDTO struct {
 }
 
 type LoginDTOResponse struct {
-	Token    string `json:"token"`
-	UserID   string `json:"user_id"`
-	Username string `json:"username"`
+	Token    string `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3OTM2NjUxNzcsImlhdCI6MTc5MzYyMTk3NywiVXNlcklkIjoiODc5NGU1ODktMGRkYi00M2NlLTlmOTItMTZmYWFmY2Y0ZWU0IiwiUm9sZSI6InVzZXIifQ.iv_JT1Fke-QaK2nx2FEF_pkDroyJP-_xK81egOAV7h4"`
+	UserID   string `json:"user_id" example:"8794e589-0ddb-43ce-9f92-16faafcf4ee4"`
+	Username string `json:"username" example:"username"`
 }
 
 // LoginUser godoc
@@ -37,7 +37,7 @@ type LoginDTOResponse struct {
 func (h *AuthHTTPHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	log := ctx.Value("log").(*logger.Logger)
+	log := logger.FromContext(ctx)
 	respWriter := response.NewResponseHandler(log, w)
 
 	var req LoginDTO

@@ -1,4 +1,4 @@
-package auth_repository
+package users_repository
 
 import (
 	"actualiteco/actualite/internal/core/domain"
@@ -7,12 +7,12 @@ import (
 	"fmt"
 )
 
-func (r *AuthRepository) GetUser(ctx context.Context, email string) (*domain.User, error) {
+func (r *UsersRepository) GetUser(ctx context.Context, email string) (domain.User, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
 	query := `
-	SELECT id, username, email, password, role, avatar_url, bio, created_at
+	SELECT id, email, password, role, created_at, username, display_name, status, avatar_url, email_verified
 	FROM users
 	WHERE email=$1
 	`
@@ -20,28 +20,11 @@ func (r *AuthRepository) GetUser(ctx context.Context, email string) (*domain.Use
 	row := r.ConnPool.QueryRow(ctxTimeout, query, email)
 
 	var model auth_models.UserModel
-	err := row.Scan(
-		&model.ID,
-		&model.Username,
-		&model.Email,
-		&model.Password,
-		&model.Role,
-		&model.AvatarURL,
-		&model.Bio,
-		&model.CreatedAt,
-	)
+	err := row.Scan(&model.ID, &model.Email, &model.Password, &model.Role, &model.CreatedAt,
+		&model.Username, &model.DisplayName, &model.Status, &model.AvatarURL, &model.EmailVerified)
 	if err != nil {
-		return nil, fmt.Errorf("scan returning user: %w", err)
+		return domain.User{}, fmt.Errorf("scan returning user: %w", err)
 	}
 
-	return &domain.User{
-		ID:        model.ID,
-		Username:  model.Username,
-		Email:     model.Email,
-		Password:  model.Password,
-		Role:      model.Role,
-		AvatarURL: model.AvatarURL.String,
-		Bio:       model.Bio.String,
-		CreatedAt: model.CreatedAt,
-	}, nil
+	return auth_models.ToDomain(model), nil
 }

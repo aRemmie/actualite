@@ -47,7 +47,7 @@ type RegisterDTOResponse struct {
 func (h *AuthHTTPHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	log := ctx.Value("log").(*logger.Logger)
+	log := logger.FromContext(ctx)
 	respWriter := response.NewResponseHandler(log, w)
 
 	var req RegisterDTO

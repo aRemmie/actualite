@@ -11,14 +11,18 @@ import (
 var AllowedRoles = []string{"admin", "user"}
 
 type User struct {
-	ID        string `validate:"required,uuid"`
-	Username  string `validate:"min=4,max=15,username_validation"`
-	Email     string `validate:"email"`
-	Password  string `validate:"min=8,max=64,ascii"`
-	Role      string `validate:"oneof=admin user"`
-	AvatarURL string
-	Bio       string `validate:"omitempty,max=100"`
-	CreatedAt time.Time
+	ID                     string `validate:"required,uuid"`
+	Email                  string `validate:"email"`
+	Password               string `validate:"min=8,max=64,ascii"`
+	Role                   string `validate:"oneof=admin user"`
+	CreatedAt              time.Time
+	Username               string `validate:"min=4,max=15,username_validation"`
+	DisplayName            string `validate:"omitempty,min=1,max=30"`
+	AvatarURL              string
+	Status                 string `validate:"omitempty,max=100"`
+	EmailVerified          bool
+	PasswordResetToken     string
+	PasswordResetExpiresAt time.Time
 }
 
 func (u *User) Validate() error {
