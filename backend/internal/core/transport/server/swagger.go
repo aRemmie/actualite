@@ -20,7 +20,10 @@ func (h *HTTPServer) RegisterSwagger() {
 		func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusOK)
-			w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
+			_, err := w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
+			if err != nil {
+				panic(err)
+			}
 		},
 	)
 }

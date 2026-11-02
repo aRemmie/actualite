@@ -160,6 +160,44 @@ paths:
       summary: Авторизация по email и паролю
       tags:
       - Auth
+  /profile/{userID}:
+    get:
+      consumes:
+      - application/json
+      description: Получить профиль пользователя с постами по id пользователя
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      - description: Bearer <jwt токен>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_features_profile_transport_http.ProfileResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "403":
+          description: Пользователь неавторизован
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      summary: Получить профиль пользователя
+      tags:
+      - Profile
   /profile/me:
     get:
       consumes:

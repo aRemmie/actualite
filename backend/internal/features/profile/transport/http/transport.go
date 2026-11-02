@@ -31,5 +31,11 @@ func (h *ProfileHTTPHandler) Routes() []server.Route {
 			Handler:              h.GetUserProfileByJWT,
 			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
 		},
+		{
+			Method:               http.MethodGet,
+			URL:                  "/profile/{userID}",
+			Handler:              h.GetUserProfile,
+			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
+		},
 	}
 }

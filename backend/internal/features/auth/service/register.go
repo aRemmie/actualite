@@ -9,12 +9,13 @@ import (
 	"actualiteco/actualite/internal/core/domain"
 	hash_utils "actualiteco/actualite/internal/utils/hash"
 
-	"github.com/google/uuid"
+	"uuid"
+
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
 func (s *AuthService) RegisterUser(ctx context.Context, user domain.User, password string) (domain.User, error) {
-	user.ID = uuid.NewString()
+	user.ID = uuid.New().String()
 
 	hash, err := hash_utils.HashPassword(password)
 	if err != nil {
