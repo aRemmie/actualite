@@ -95,9 +95,6 @@ definitions:
       avatar_url:
         example: http://localhost:8080/avatar_url
         type: string
-      bio:
-        example: something smart
-        type: string
       created_at:
         example: 2006-01-02T15:04:05Z07:00
         type: string
@@ -115,6 +112,21 @@ definitions:
         type: string
       role:
         example: user
+        type: string
+      status:
+        example: something smart
+        type: string
+      username:
+        example: username
+        type: string
+    type: object
+  internal_features_profile_transport_http.UpdateProfileRequest:
+    properties:
+      display_name:
+        example: mark
+        type: string
+      status:
+        example: something smart
         type: string
       username:
         example: username
@@ -160,6 +172,49 @@ paths:
       summary: Авторизация по email и паролю
       tags:
       - Auth
+  /profile:
+    patch:
+      consumes:
+      - application/json
+      description: Обновить профиль пользователя (display_name, username, status)
+      parameters:
+      - description: Bearer <jwt токен>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Информация профиля
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_profile_transport_http.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Успешный запрос
+          schema:
+            $ref: '#/definitions/internal_features_profile_transport_http.ProfileResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "403":
+          description: Пользователь неавторизован
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "409":
+          description: Пользователь с таким юзернеймом уже существует
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      summary: Обновить профиль пользователя
+      tags:
+      - Profile
   /profile/{userID}:
     get:
       consumes:

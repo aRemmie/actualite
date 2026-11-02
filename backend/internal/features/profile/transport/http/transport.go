@@ -15,6 +15,7 @@ type ProfileHTTPHandler struct {
 
 type profileService interface {
 	GetProfile(ctx context.Context, id uuid.UUID) (domain.User, error)
+	Update(ctx context.Context, id uuid.UUID, displayName, username, status *string) (domain.User, error)
 }
 
 func NewProfileHTTPHandler(serv profileService) *ProfileHTTPHandler {
@@ -35,6 +36,12 @@ func (h *ProfileHTTPHandler) Routes() []server.Route {
 			Method:               http.MethodGet,
 			URL:                  "/profile/{userID}",
 			Handler:              h.GetUserProfile,
+			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
+		},
+		{
+			Method:               http.MethodPatch,
+			URL:                  "/profile",
+			Handler:              h.Update,
 			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
 		},
 	}

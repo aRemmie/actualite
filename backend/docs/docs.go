@@ -67,6 +67,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/profile": {
+            "patch": {
+                "description": "Обновить профиль пользователя (display_name, username, status)",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Обновить профиль пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Информация профиля",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_profile_transport_http.UpdateProfileRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_profile_transport_http.ProfileResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "403": {
+                        "description": "Пользователь неавторизован",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "409": {
+                        "description": "Пользователь с таким юзернеймом уже существует",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
         "/profile/me": {
             "get": {
                 "description": "Получить профиль пользователя с постами по JWT",
@@ -353,10 +418,6 @@ const docTemplate = `{
                     "type": "string",
                     "example": "http://localhost:8080/avatar_url"
                 },
-                "bio": {
-                    "type": "string",
-                    "example": "something smart"
-                },
                 "created_at": {
                     "type": "string",
                     "example": "2006-01-02T15:04:05Z07:00"
@@ -380,6 +441,27 @@ const docTemplate = `{
                 "role": {
                     "type": "string",
                     "example": "user"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "something smart"
+                },
+                "username": {
+                    "type": "string",
+                    "example": "username"
+                }
+            }
+        },
+        "internal_features_profile_transport_http.UpdateProfileRequest": {
+            "type": "object",
+            "properties": {
+                "display_name": {
+                    "type": "string",
+                    "example": "mark"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "something smart"
                 },
                 "username": {
                     "type": "string",

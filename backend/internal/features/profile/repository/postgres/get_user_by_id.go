@@ -2,7 +2,7 @@ package users_repository
 
 import (
 	"actualiteco/actualite/internal/core/domain"
-	auth_models "actualiteco/actualite/internal/features/auth/repository"
+	auth_models "actualiteco/actualite/internal/features/profile/repository"
 	"context"
 	"fmt"
 	"uuid"

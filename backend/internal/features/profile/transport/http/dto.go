@@ -2,6 +2,12 @@ package profile_transport
 
 import "actualiteco/actualite/internal/core/domain"
 
+type UpdateProfileRequest struct {
+	DisplayName *string `json:"display_name" example:"mark"`
+	Username    *string `json:"username" example:"username"`
+	Status      *string `json:"status" example:"something smart"`
+}
+
 type ProfileResponse struct {
 	ID            string `json:"id" example:"8794e589-0ddb-43ce-9f92-16faafcf4ee4"`
 	Email         string `json:"email" example:"test.user@email.com"`
@@ -10,7 +16,7 @@ type ProfileResponse struct {
 	DisplayName   string `json:"display_name" example:"mark"`
 	Username      string `json:"username" example:"username"`
 	AvatarURL     string `json:"avatar_url" example:"http://localhost:8080/avatar_url"`
-	Bio           string `json:"bio" example:"something smart"`
+	Status        string `json:"status" example:"something smart"`
 	EmailVerified bool   `json:"email_verified" example:"false"`
 }
 
@@ -23,7 +29,7 @@ func toResponse(user domain.User) ProfileResponse {
 		Username:      user.Username,
 		DisplayName:   user.DisplayName,
 		AvatarURL:     user.AvatarURL,
-		Bio:           user.Status,
+		Status:        user.Status,
 		EmailVerified: user.EmailVerified,
 	}
 }

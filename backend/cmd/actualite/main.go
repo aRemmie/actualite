@@ -13,9 +13,9 @@ import (
 	"actualiteco/actualite/internal/core/logger"
 	postgres_pool "actualiteco/actualite/internal/core/repository/postgres"
 	"actualiteco/actualite/internal/core/transport/server"
-	users_repository "actualiteco/actualite/internal/features/auth/repository/postgres"
 	auth_service "actualiteco/actualite/internal/features/auth/service"
 	auth_transport "actualiteco/actualite/internal/features/auth/transport/http"
+	users_repository "actualiteco/actualite/internal/features/profile/repository/postgres"
 	profile_service "actualiteco/actualite/internal/features/profile/service"
 	profile_transport "actualiteco/actualite/internal/features/profile/transport/http"
 )
