@@ -9,14 +9,20 @@ import (
 	"actualiteco/actualite/internal/core/logger"
 	"actualiteco/actualite/internal/core/transport/response"
 
+	"github.com/go-playground/validator/v10"
 	"go.uber.org/zap"
 )
 
 type RegisterDTO struct {
-	Email    string `json:"email" example:"m4rkek@gmail.com" extensions:"x-order=0"`
+	Email    string `json:"email" validate:"required,email" example:"m4rkek@gmail.com" extensions:"x-order=0"`
 	Username string `json:"username" example:"m4rkek" extensions:"x-order=1"`
-	Password string `json:"password" example:"supersecretpass" extensions:"x-order=2"`
-	Role     string `json:"role" example:"admin" extensions:"x-order=3"`
+	Password string `json:"password" validate:"required,min=8,max=64,ascii" example:"supersecretpass" extensions:"x-order=2"`
+	Role     string `json:"role" validate:"required" example:"admin" extensions:"x-order=3"`
+}
+
+func (r RegisterDTO) Validate() error {
+	validate := validator.New()
+	return validate.Struct(r)
 }
 
 type RegisterDTOResponse struct {
@@ -47,6 +53,13 @@ func (h *AuthHTTPHandler) RegisterUser(w http.ResponseWriter, r *http.Request) {
 	var req RegisterDTO
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		log.Debug("error register decoding", zap.Error(err))
+
+		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		log.Debug("error register validation", zap.Error(err))
 
 		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
 		return
