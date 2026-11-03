@@ -1,0 +1,49 @@
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    max-width: 780px;
+    padding: 48px max(24px, 8vw);
+
+    @media (max-width: 480px) {
+        padding: 40px 24px;
+    }
+}
+
+.brand {
+    padding-bottom: 9px;
+    margin-bottom: 40px;
+    border-bottom: 0.2px solid var(--border-color);
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.title {
+    font-family: var(--font-serif);
+    font-size: clamp(42px, 7vw, 88px);
+    font-weight: 400;
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+    color: var(--auth-title-color);
+}
+
+.subtitle {
+    font-size: 12px;
+    line-height: 1.4;
+    color: var(--text-secondary);
+    max-width: 320px;
+}
+
+.actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+}
