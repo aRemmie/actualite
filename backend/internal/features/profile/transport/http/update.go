@@ -1,10 +1,9 @@
 package profile_transport
 
 import (
-	"actualiteco/actualite/internal/core/domain"
 	"actualiteco/actualite/internal/core/logger"
+	httprequest "actualiteco/actualite/internal/core/transport/request"
 	"actualiteco/actualite/internal/core/transport/response"
-	"encoding/json"
 	"net/http"
 
 	"go.uber.org/zap"
@@ -32,14 +31,14 @@ func (h *ProfileHTTPHandler) Update(w http.ResponseWriter, r *http.Request) {
 	userID, err := getUserUUIDFromContext(ctx)
 	if err != nil {
 		log.Error("get userID from context", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
+		respWriter.MapError(err)
 		return
 	}
 
 	var req UpdateProfileRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		log.Debug("failed to decode request", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
+	if err := httprequest.DecodeAndValidate(r, &req); err != nil {
+		log.Debug("decode and validate update profile request")
+		respWriter.MapError(err)
 		return
 	}
 

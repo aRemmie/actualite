@@ -67,6 +67,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts/create": {
+            "post": {
+                "description": "Создает пост длиной \u003c= 280 символов",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Создание поста",
+                "parameters": [
+                    {
+                        "description": "parent_id, image_url - необязательные параметры",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_post_transport_http.CreatePostDTO"
+                        }
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Пост создан",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_post_transport_http.CreatePostDTOResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос (content \u003e 280 символов; userID неправильного формата)",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "Не удалось найти пост с данным parent_id",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "patch": {
                 "description": "Обновить профиль пользователя (display_name, username, status)",
@@ -408,6 +473,61 @@ const docTemplate = `{
                     "type": "string",
                     "x-order": "4",
                     "example": "2026-03-25T12:00:41.267Z"
+                }
+            }
+        },
+        "internal_features_post_transport_http.CreatePostDTO": {
+            "type": "object",
+            "required": [
+                "content"
+            ],
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "maxLength": 280,
+                    "minLength": 1,
+                    "example": "Hello, world!"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
+                "parent_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                }
+            }
+        },
+        "internal_features_post_transport_http.CreatePostDTOResponse": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string",
+                    "example": "Hello, world!"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-03-25T12:00:41.267Z"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
+                },
+                "image_url": {
+                    "type": "string",
+                    "example": "https://example.com/image.jpg"
+                },
+                "likes_count": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "parent_id": {
+                    "type": "string",
+                    "example": "123e4567-e89b-12d3-a456-426614174000"
+                },
+                "user_id": {
+                    "type": "string",
+                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
                 }
             }
         },

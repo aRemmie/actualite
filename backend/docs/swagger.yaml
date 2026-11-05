@@ -90,6 +90,46 @@ definitions:
         type: string
         x-order: "1"
     type: object
+  internal_features_post_transport_http.CreatePostDTO:
+    properties:
+      content:
+        example: Hello, world!
+        maxLength: 280
+        minLength: 1
+        type: string
+      image_url:
+        example: https://example.com/image.jpg
+        type: string
+      parent_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+    required:
+    - content
+    type: object
+  internal_features_post_transport_http.CreatePostDTOResponse:
+    properties:
+      content:
+        example: Hello, world!
+        type: string
+      created_at:
+        example: "2026-03-25T12:00:41.267Z"
+        type: string
+      id:
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        type: string
+      image_url:
+        example: https://example.com/image.jpg
+        type: string
+      likes_count:
+        example: 10
+        type: integer
+      parent_id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      user_id:
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        type: string
+    type: object
   internal_features_profile_transport_http.ProfileResponse:
     properties:
       avatar_url:
@@ -172,6 +212,50 @@ paths:
       summary: Авторизация по email и паролю
       tags:
       - Auth
+  /posts/create:
+    post:
+      consumes:
+      - application/json
+      description: Создает пост длиной <= 280 символов
+      parameters:
+      - description: parent_id, image_url - необязательные параметры
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_post_transport_http.CreatePostDTO'
+      - description: Bearer <jwt токен>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Пост создан
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.CreatePostDTOResponse'
+        "400":
+          description: Неверный запрос (content > 280 символов; userID неправильного
+            формата)
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "404":
+          description: Не удалось найти пост с данным parent_id
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      summary: Создание поста
+      tags:
+      - Posts
   /profile:
     patch:
       consumes:

@@ -33,7 +33,7 @@ func (h *ProfileHTTPHandler) GetUserProfileByJWT(w http.ResponseWriter, r *http.
 	userID, err := getUserUUIDFromContext(ctx)
 	if err != nil {
 		log.Error("get userID from context", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
+		respWriter.MapError(err)
 		return
 	}
 
