@@ -166,6 +166,30 @@ definitions:
         example: testuser
         type: string
     type: object
+  internal_features_post_transport_http.PostsWithPaginationDTOResponse:
+    properties:
+      pagination:
+        $ref: '#/definitions/internal_features_post_transport_http.paginationDTO'
+      posts:
+        items:
+          $ref: '#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse'
+        type: array
+    type: object
+  internal_features_post_transport_http.paginationDTO:
+    properties:
+      page:
+        example: 1
+        type: integer
+      page_size:
+        example: 20
+        type: integer
+      total:
+        example: 20
+        type: integer
+      total_pages:
+        example: 100
+        type: integer
+    type: object
   internal_features_profile_transport_http.ProfileResponse:
     properties:
       avatar_url:
@@ -456,7 +480,7 @@ paths:
         "200":
           description: Посты найдены
           schema:
-            $ref: '#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse'
+            $ref: '#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse'
         "400":
           description: Неверный запрос
           schema:

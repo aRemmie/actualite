@@ -421,7 +421,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Посты найдены",
                         "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
                         }
                     },
                     "400": {
@@ -724,6 +724,41 @@ const docTemplate = `{
                 "username": {
                     "type": "string",
                     "example": "testuser"
+                }
+            }
+        },
+        "internal_features_post_transport_http.PostsWithPaginationDTOResponse": {
+            "type": "object",
+            "properties": {
+                "pagination": {
+                    "$ref": "#/definitions/internal_features_post_transport_http.paginationDTO"
+                },
+                "posts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
+                    }
+                }
+            }
+        },
+        "internal_features_post_transport_http.paginationDTO": {
+            "type": "object",
+            "properties": {
+                "page": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "page_size": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "total": {
+                    "type": "integer",
+                    "example": 20
+                },
+                "total_pages": {
+                    "type": "integer",
+                    "example": 100
                 }
             }
         },

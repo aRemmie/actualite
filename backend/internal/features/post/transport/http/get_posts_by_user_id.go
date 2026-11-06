@@ -20,7 +20,7 @@ import (
 // @Param userID path string true "User ID (UUID)" Format(uuid) Example(3fa85f64-5717-4562-b3fc-2c963f66afa6)
 // @Param page query int false "Номер страницы"  minimum(1)  default(1)
 // @Param page_size query int false "Размер страницы"  minimum(1)  maximum(30)  default(20)
-// @Success 200 {object} PostWithAuthorDTOResponse "Посты найдены"
+// @Success 200 {object} PostsWithPaginationDTOResponse "Посты найдены"
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
 // @Failure 401 {object} domain.CustomError "Неверные учетные данные"
 // @Failure 404 {object} domain.CustomError "У пользователя нет постов"
