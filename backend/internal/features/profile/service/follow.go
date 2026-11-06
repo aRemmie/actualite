@@ -18,3 +18,15 @@ func (s *ProfileService) Follow(ctx context.Context, followerID, followingID uui
 
 	return nil
 }
+
+func (s *ProfileService) Unfollow(ctx context.Context, followerID, followingID uuid.UUID) error {
+	if followerID == followingID {
+		return fmt.Errorf("user can't unfollow themselves: %w", domain.ErrInvalidRequest)
+	}
+
+	if err := s.repo.Unfollow(ctx, followerID, followingID); err != nil {
+		return fmt.Errorf("unfollow user: %w", err)
+	}
+
+	return nil
+}

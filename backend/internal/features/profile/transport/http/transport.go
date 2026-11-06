@@ -17,6 +17,7 @@ type profileService interface {
 	GetProfile(ctx context.Context, id uuid.UUID) (domain.User, error)
 	Update(ctx context.Context, id uuid.UUID, displayName, username, status *string) (domain.User, error)
 	Follow(ctx context.Context, followerID, followingID uuid.UUID) error
+	Unfollow(ctx context.Context, followerID, followingID uuid.UUID) error
 }
 
 func NewProfileHTTPHandler(serv profileService) *ProfileHTTPHandler {
@@ -49,6 +50,12 @@ func (h *ProfileHTTPHandler) Routes() []server.Route {
 			Method:               http.MethodPost,
 			URL:                  "/profile/{userID}/follow",
 			Handler:              h.Follow,
+			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
+		},
+		{
+			Method:               http.MethodPost,
+			URL:                  "/profile/{userID}/unfollow",
+			Handler:              h.Unfollow,
 			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
 		},
 	}

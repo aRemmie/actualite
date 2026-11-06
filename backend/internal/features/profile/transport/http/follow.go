@@ -51,3 +51,44 @@ func (h *ProfileHTTPHandler) Follow(w http.ResponseWriter, r *http.Request) {
 
 	respWriter.JSONResponse(FollowResponse{Message: "success"}, http.StatusOK)
 }
+
+// Unfollow godoc
+// @Summary Отписаться от пользователя
+// @Description Отписаться авторизованным пользователем от другого пользователя по userID
+// @Tags Profile
+// @Accept json
+// @Produce json
+// @Param userID path string true "User ID"
+// @Param Authorization header string true "Bearer <jwt токен>"
+// @Success 200 {object} FollowResponse "Успешный запрос"
+// @Failure 400 {object} domain.CustomError "Неверный запрос (в т.ч. отписка от себя или отсутствие подписки)"
+// @Failure 401 {object} domain.CustomError "Пользователь неавторизован"
+// @Failure 500 {object}  domain.InternalError "Внутренняя ошибка сервера"
+// @Router /profile/{userID}/unfollow [post]
+func (h *ProfileHTTPHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	log := logger.FromContext(ctx)
+	respWriter := response.NewResponseHandler(log, w)
+
+	followerID, err := getUserUUIDFromContext(ctx)
+	if err != nil {
+		log.Error("get userID from context", zap.Error(err))
+		respWriter.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
+		return
+	}
+
+	followingID, err := httputils.GetUUIDPathValue(r, "userID")
+	if err != nil {
+		log.Info("get userID from path value", zap.Error(err))
+		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
+		return
+	}
+
+	if err := h.service.Unfollow(ctx, followerID, followingID); err != nil {
+		log.Error("failed to unfollow user", zap.Error(err))
+		respWriter.MapError(err)
+		return
+	}
+
+	respWriter.JSONResponse(FollowResponse{Message: "success"}, http.StatusOK)
+}
