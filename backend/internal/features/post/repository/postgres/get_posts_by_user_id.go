@@ -20,6 +20,7 @@ func (r *PostsRepository) GetPostsByUserID(ctx context.Context, userID uuid.UUID
 		FROM posts p
 		LEFT JOIN users u ON p.user_id = u.id 
 		WHERE u.id = $1
+		ORDER BY p.created_at DESC
 		OFFSET $2
 		LIMIT $3;
 	`
