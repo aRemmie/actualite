@@ -7,36 +7,38 @@ import { AppRoutes, RoutePath } from './paths';
 
 export { AppRoutes, RoutePath };
 
+export type RouteAccess = 'any' | 'authOnly' | 'guestOnly';
+
 export interface AppRouteConfig {
     path: string;
     element: ReactNode;
-    authOnly: boolean;
+    access: RouteAccess;
 }
 
 export const routeConfig: Record<AppRoutes, AppRouteConfig> = {
     [AppRoutes.AUTH]: {
         path: RoutePath.auth,
         element: <AuthenticationPageAsync />,
-        authOnly: false,
+        access: 'guestOnly',
     },
     [AppRoutes.FEED]: {
         path: RoutePath.feed,
         element: <FeedPageAsync />,
-        authOnly: true,
+        access: 'authOnly',
     },
     [AppRoutes.POST]: {
         path: RoutePath.post,
         element: <PostDetailPageAsync />,
-        authOnly: true,
+        access: 'authOnly',
     },
     [AppRoutes.PROFILE]: {
         path: RoutePath.profile,
         element: <ProfilePageAsync />,
-        authOnly: true,
+        access: 'authOnly',
     },
     [AppRoutes.OTHERS_PROFILE]: {
         path: RoutePath.others_profile,
         element: <ProfilePageAsync />,
-        authOnly: true,
+        access: 'authOnly',
     },
 };

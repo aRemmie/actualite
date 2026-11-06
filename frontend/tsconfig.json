@@ -19,6 +19,18 @@
             ],
             "@pages/*": [
                 "./src/pages/*"
+            ],
+            "@stores/*": [
+                "./src/stores/*"
+            ],
+            "@utils/*": [
+                "./src/utils/*"
+            ],
+            "@generated/*": [
+                "./src/generated/*"
+            ],
+            "@router/*": [
+                "./src/app/router/*"
             ]
         },
         "target": "ES2020",

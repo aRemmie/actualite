@@ -1,7 +1,8 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AuthService } from '../services/AuthService';
-import { clearToken, hasValidToken, setToken } from '../utils/token.utils';
+import { AuthService } from '@services/AuthService';
+import { resetSessionExpiredFlag, setUnauthorizedHandler } from '@api/api';
+import { clearToken, hasValidToken, setToken } from '@utils/token.utils';
 
 interface AuthState {
     isAuth: boolean;
@@ -38,6 +39,7 @@ export const useAuthStore = create<AuthState>()(
                         throw new Error('Сервер не вернул токен');
                     }
                     setToken(response.token);
+                    resetSessionExpiredFlag();
                     set({
                         isAuth: true,
                         isLoading: false,
@@ -85,3 +87,5 @@ export const useAuthStore = create<AuthState>()(
         },
     ),
 );
+
+setUnauthorizedHandler(() => useAuthStore.getState().logout());

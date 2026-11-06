@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Button from '../../components/shared/Button/Button';
-import AuthModal from '../../components/auth/AuthModal';
+import Button from '@components/shared/Button/Button';
+import AuthModal from '@components/auth/AuthModal';
 import styles from './AuthenticationPage.module.scss';
 
 const AuthenticationPage = () => {

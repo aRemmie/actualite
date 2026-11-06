@@ -1,9 +1,19 @@
-import { Suspense } from 'react';
+import { ReactNode, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import NotFoundPageAsync from '@pages/NotFoundPage/NotFoundPage.async';
-import { routeConfig } from './routeConfig';
+import { useAuthStore } from '@stores/useAuthStore';
+import { AppRouteConfig, routeConfig } from './routeConfig';
 import { RoutePath } from './paths';
-import { useAuthStore } from '../../stores/useAuthStore';
+
+const applyAccess = (route: AppRouteConfig, isAuth: boolean): ReactNode => {
+    if (route.access === 'authOnly' && !isAuth) {
+        return <Navigate to={RoutePath.auth} replace />;
+    }
+    if (route.access === 'guestOnly' && isAuth) {
+        return <Navigate to={RoutePath.feed} replace />;
+    }
+    return route.element;
+};
 
 const AppRouter = () => {
     const isAuth = useAuthStore((state) => state.isAuth);
@@ -13,15 +23,13 @@ const AppRouter = () => {
         <BrowserRouter>
             <Suspense fallback={<div />}>
                 <Routes>
-                    {Object.values(routeConfig).map((route) => {
-                        const element =
-                            route.authOnly === isAuth ? (
-                                route.element
-                            ) : (
-                                <Navigate to={home} replace />
-                            );
-                        return <Route key={route.path} path={route.path} element={element} />;
-                    })}
+                    {Object.values(routeConfig).map((route) => (
+                        <Route
+                            key={route.path}
+                            path={route.path}
+                            element={applyAccess(route, isAuth)}
+                        />
+                    ))}
                     <Route path="/" element={<Navigate to={home} replace />} />
                     <Route path="*" element={<NotFoundPageAsync />} />
                 </Routes>

@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import AppLayout from '../../components/layout/AppLayout/AppLayout';
-import EmptyState from '../../components/shared/EmptyState/EmptyState';
-import { useAuthStore } from '../../stores/useAuthStore';
+import AppLayout from '@components/layout/AppLayout/AppLayout';
+import EmptyState from '@components/shared/EmptyState/EmptyState';
+import { useAuthStore } from '@stores/useAuthStore';
 
 const ProfilePage = () => {
     const { id } = useParams<{ id: string }>();

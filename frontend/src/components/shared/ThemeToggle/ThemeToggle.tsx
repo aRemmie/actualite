@@ -1,22 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useThemeStore } from '@stores/useThemeStore';
 import styles from './ThemeToggle.module.scss';
 
 const ThemeToggle: React.FC = () => {
-    const [theme, setTheme] = useState<'dark' | 'light'>('dark');
-
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as 'dark' | 'light';
-        const initialTheme = savedTheme || 'dark';
-        setTheme(initialTheme);
-        document.documentElement.setAttribute('data-theme', initialTheme);
-    }, []);
-
-    const toggleTheme = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-        localStorage.setItem('theme', newTheme);
-        document.documentElement.setAttribute('data-theme', newTheme);
-    };
+    const theme = useThemeStore((state) => state.theme);
+    const toggleTheme = useThemeStore((state) => state.toggleTheme);
 
     return (
         <button className={styles.toggle} onClick={toggleTheme} aria-label="Переключить тему">

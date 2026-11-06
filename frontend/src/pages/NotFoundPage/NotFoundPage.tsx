@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '../../components/shared/Button/Button';
-import { RoutePath } from '../../app/router/paths';
+import Button from '@components/shared/Button/Button';
+import { RoutePath } from '@router/paths';
 import styles from './NotFoundPage.module.scss';
 
 const NotFoundPage = () => {

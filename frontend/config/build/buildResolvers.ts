@@ -15,6 +15,10 @@ export function buildResolvers(options: BuildOptions): webpack.ResolveOptions {
             '@services': path.resolve(src, 'services'),
             '@api': path.resolve(src, 'app', 'api'),
             '@pages': path.resolve(src, 'pages'),
+            '@stores': path.resolve(src, 'stores'),
+            '@utils': path.resolve(src, 'utils'),
+            '@generated': path.resolve(src, 'generated'),
+            '@router': path.resolve(src, 'app', 'router'),
         },
     };
 }

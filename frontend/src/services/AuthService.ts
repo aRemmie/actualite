@@ -1,11 +1,11 @@
-import $api from '../app/api/api';
-import { clearToken } from '../utils/token.utils';
+import $api from '@api/api';
+import { clearToken } from '@utils/token.utils';
 import type {
     InternalFeaturesAuthTransportHttpLoginDTO,
     InternalFeaturesAuthTransportHttpLoginDTOResponse,
     InternalFeaturesAuthTransportHttpRegisterDTO,
     InternalFeaturesAuthTransportHttpRegisterDTOResponse,
-} from '../generated/data-contracts';
+} from '@generated/data-contracts';
 
 export class AuthService {
     static async register(

@@ -1,9 +1,9 @@
 import { useFormik } from 'formik';
 import { toast } from 'react-toastify';
-import TextField from '../shared/TextField/TextField';
-import Button from '../shared/Button/Button';
-import { useAuthStore } from '../../stores/useAuthStore';
-import { parseApiError } from '../../utils/error.utils';
+import TextField from '@components/shared/TextField/TextField';
+import Button from '@components/shared/Button/Button';
+import { useAuthStore } from '@stores/useAuthStore';
+import { parseApiError } from '@utils/error.utils';
 import { isFilled, signinSchema } from './validation';
 import styles from './AuthForms.module.scss';
 

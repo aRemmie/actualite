@@ -1,8 +1,8 @@
 import React, { FC, ReactNode } from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useAuthStore } from '../../../stores/useAuthStore';
-import { RoutePath } from '../../../app/router/paths';
+import { useAuthStore } from '@stores/useAuthStore';
+import { RoutePath } from '@router/paths';
 import styles from './AppLayout.module.scss';
 
 interface AppLayoutProps {

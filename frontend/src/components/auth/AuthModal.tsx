@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Modal from '../shared/Modal/Modal';
-import Button from '../shared/Button/Button';
+import Modal from '@components/shared/Modal/Modal';
+import Button from '@components/shared/Button/Button';
 import SigninForm from './SigninForm';
 import SignupForm from './SignupForm';
 import styles from './AuthModal.module.scss';
