@@ -8,6 +8,10 @@ type UpdateProfileRequest struct {
 	Status      *string `json:"status" example:"something smart"`
 }
 
+type FollowResponse struct {
+	Message string `json:"message" example:"success"`
+}
+
 type ProfileResponse struct {
 	ID            string `json:"id" example:"8794e589-0ddb-43ce-9f92-16faafcf4ee4"`
 	Email         string `json:"email" example:"test.user@email.com"`
