@@ -18,17 +18,20 @@ func New(connPool postgres_pool.Pool) *PostsRepository {
 }
 
 type PostModel struct {
-	ID         uuid.UUID  `db:"id"`
-	UserID     uuid.UUID  `db:"user_id"`
-	ParentID   *uuid.UUID `db:"parent_id"`
-	Content    string     `db:"content"`
-	ImageURL   *string    `db:"image_url"`
-	LikesCount uint       `db:"likes_count"`
-	DeletedAt  *time.Time `db:"deleted_at"`
-	CreatedAt  time.Time  `db:"created_at"`
+	ID          uuid.UUID  `db:"id"`
+	UserID      uuid.UUID  `db:"user_id"`
+	Username    string     `db:"username"`
+	DisplayName *string    `db:"display_name"`
+	AvatarURL   *string    `db:"avatar_url"`
+	ParentID    *uuid.UUID `db:"parent_id"`
+	Content     string     `db:"content"`
+	ImageURL    *string    `db:"image_url"`
+	LikesCount  uint       `db:"likes_count"`
+	DeletedAt   *time.Time `db:"deleted_at"`
+	CreatedAt   time.Time  `db:"created_at"`
 }
 
-func toDomain(m PostModel) domain.Post {
+func toPostDomain(m PostModel) domain.Post {
 	return domain.Post{
 		ID:         m.ID,
 		UserID:     m.UserID,
@@ -38,4 +41,16 @@ func toDomain(m PostModel) domain.Post {
 		LikesCount: m.LikesCount,
 		CreatedAt:  m.CreatedAt,
 	}
+}
+
+func toPostWithAuthorDomain(m PostModel) domain.PostWithAuthor {
+	post := toPostDomain(m)
+	author := domain.UserSummary{
+		ID:          m.UserID,
+		Username:    m.Username,
+		DisplayName: m.DisplayName,
+		AvatarURL:   m.AvatarURL,
+	}
+
+	return domain.NewPostWithAuthor(post, author)
 }

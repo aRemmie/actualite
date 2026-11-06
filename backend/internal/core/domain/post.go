@@ -19,6 +19,18 @@ type Post struct {
 	CreatedAt  time.Time
 }
 
+type UserSummary struct {
+	ID          uuid.UUID
+	Username    string
+	DisplayName *string
+	AvatarURL   *string
+}
+
+type PostWithAuthor struct {
+	Post   Post
+	Author UserSummary
+}
+
 func NewPost(userID uuid.UUID, content string, imageURL *string, parentID *uuid.UUID) (Post, error) {
 	post := Post{
 		ID:        uuid.New(),
@@ -34,6 +46,13 @@ func NewPost(userID uuid.UUID, content string, imageURL *string, parentID *uuid.
 	}
 
 	return post, nil
+}
+
+func NewPostWithAuthor(post Post, author UserSummary) PostWithAuthor {
+	return PostWithAuthor{
+		Post:   post,
+		Author: author,
+	}
 }
 
 func (p *Post) Validate() error {

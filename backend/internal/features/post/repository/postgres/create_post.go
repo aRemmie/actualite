@@ -39,5 +39,5 @@ func (r *PostsRepository) CreatePost(ctx context.Context, post domain.Post) (dom
 		return domain.Post{}, fmt.Errorf("scan returning post: %w", err)
 	}
 
-	return toDomain(model), nil
+	return toPostDomain(model), nil
 }

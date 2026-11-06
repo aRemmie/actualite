@@ -22,7 +22,21 @@ type CreatePostDTOResponse struct {
 	CreatedAt  time.Time  `json:"created_at" example:"2026-03-25T12:00:41.267Z"`
 }
 
-func toResponse(p domain.Post) CreatePostDTOResponse {
+type GetPostByIdDTOResponse struct {
+	ID          uuid.UUID  `json:"id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
+	UserID      uuid.UUID  `json:"user_id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
+	Username    string     `json:"username" example:"testuser"`
+	DisplayName *string    `json:"display_name" example:"test"`
+	AvatarURL   *string    `json:"avatar_url" example:"https://example.com/avatar.jpg"`
+	ParentID    *uuid.UUID `json:"parent_id" example:"123e4567-e89b-12d3-a456-426614174000"`
+	Content     string     `json:"content" example:"Hello, world!"`
+	ImageURL    *string    `json:"image_url" example:"https://example.com/image.jpg"`
+	LikesCount  uint       `json:"likes_count" example:"10"`
+	CreatedAt   time.Time  `json:"created_at" example:"2026-03-25T12:00:41.267Z"`
+	DeletedAt   time.Time  `json:"deleted_at" example:"2026-03-25T12:00:41.267Z"`
+}
+
+func createPostToResponse(p domain.Post) CreatePostDTOResponse {
 	return CreatePostDTOResponse{
 		ID:         p.ID,
 		UserID:     p.UserID,
@@ -31,5 +45,21 @@ func toResponse(p domain.Post) CreatePostDTOResponse {
 		ImageURL:   p.ImageURL,
 		LikesCount: p.LikesCount,
 		CreatedAt:  p.CreatedAt,
+	}
+}
+
+func getPostByIDToResponse(p domain.PostWithAuthor) GetPostByIdDTOResponse {
+	return GetPostByIdDTOResponse{
+		ID:          p.Post.ID,
+		UserID:      p.Post.UserID,
+		Username:    p.Author.Username,
+		DisplayName: p.Author.DisplayName,
+		AvatarURL:   p.Author.AvatarURL,
+		ParentID:    p.Post.ParentID,
+		Content:     p.Post.Content,
+		ImageURL:    p.Post.ImageURL,
+		LikesCount:  p.Post.LikesCount,
+		CreatedAt:   p.Post.CreatedAt,
+		DeletedAt:   p.Post.DeletedAt,
 	}
 }

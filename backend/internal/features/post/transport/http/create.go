@@ -57,7 +57,7 @@ func (h *PostsHTTPHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respWriter.JSONResponse(toResponse(post), http.StatusCreated)
+	respWriter.JSONResponse(createPostToResponse(post), http.StatusCreated)
 }
 
 func getUserUUIDFromContext(ctx context.Context) (uuid.UUID, error) {
