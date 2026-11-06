@@ -23,7 +23,7 @@ type GetPostByIdDTO struct {
 // @Produce json
 // @Param postID path string true "Post ID (UUID)" Format(uuid) Example(3fa85f64-5717-4562-b3fc-2c963f66afa6)
 // @Param Authorization header string true "Bearer <jwt токен>"
-// @Success 200 {object} GetPostByIdDTOResponse "Пост найден"
+// @Success 200 {object} PostWithAuthorDTOResponse "Пост найден"
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
 // @Failure 401 {object} domain.CustomError "Не удалось аутентифицировать пользователя"
 // @Failure 404 {object} domain.CustomError "Пост не найден"
@@ -50,5 +50,5 @@ func (h *PostsHTTPHandler) GetPostByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respWriter.JSONResponse(getPostByIDToResponse(postWithAuthor), http.StatusOK)
+	respWriter.JSONResponse(postWithAuthorToResponse(postWithAuthor), http.StatusOK)
 }

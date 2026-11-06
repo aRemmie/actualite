@@ -102,7 +102,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Пост создан",
                         "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.CreatePostDTOResponse"
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostDTOResponse"
                         }
                     },
                     "400": {
@@ -167,7 +167,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Пост найден",
                         "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.GetPostByIdDTOResponse"
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
                         }
                     },
                     "400": {
@@ -356,6 +356,88 @@ const docTemplate = `{
                     },
                     "403": {
                         "description": "Пользователь неавторизован",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
+        "/profile/{userID}/posts": {
+            "get": {
+                "description": "Ищет посты пользователя по ID с поддержкой пагинации через параметры page и page_size",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Поиск постов пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                        "description": "User ID (UUID)",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Номер страницы",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 30,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Размер страницы",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Посты найдены",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "У пользователя нет постов",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
@@ -563,7 +645,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_features_post_transport_http.CreatePostDTOResponse": {
+        "internal_features_post_transport_http.PostDTOResponse": {
             "type": "object",
             "properties": {
                 "content": {
@@ -596,7 +678,7 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_features_post_transport_http.GetPostByIdDTOResponse": {
+        "internal_features_post_transport_http.PostWithAuthorDTOResponse": {
             "type": "object",
             "properties": {
                 "avatar_url": {

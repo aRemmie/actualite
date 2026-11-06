@@ -13,6 +13,8 @@ type PostsService struct {
 type PostsRepository interface {
 	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
+	GetPostsByUserID(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, error)
 }
 
 func New(postsRepo PostsRepository) *PostsService {

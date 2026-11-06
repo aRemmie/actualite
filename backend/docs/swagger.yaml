@@ -106,7 +106,7 @@ definitions:
     required:
     - content
     type: object
-  internal_features_post_transport_http.CreatePostDTOResponse:
+  internal_features_post_transport_http.PostDTOResponse:
     properties:
       content:
         example: Hello, world!
@@ -130,7 +130,7 @@ definitions:
         example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
         type: string
     type: object
-  internal_features_post_transport_http.GetPostByIdDTOResponse:
+  internal_features_post_transport_http.PostWithAuthorDTOResponse:
     properties:
       avatar_url:
         example: https://example.com/avatar.jpg
@@ -273,7 +273,7 @@ paths:
         "200":
           description: Пост найден
           schema:
-            $ref: '#/definitions/internal_features_post_transport_http.GetPostByIdDTOResponse'
+            $ref: '#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse'
         "400":
           description: Неверный запрос
           schema:
@@ -316,7 +316,7 @@ paths:
         "201":
           description: Пост создан
           schema:
-            $ref: '#/definitions/internal_features_post_transport_http.CreatePostDTOResponse'
+            $ref: '#/definitions/internal_features_post_transport_http.PostDTOResponse'
         "400":
           description: Неверный запрос (content > 280 символов; userID неправильного
             формата)
@@ -418,6 +418,64 @@ paths:
       summary: Получить профиль пользователя
       tags:
       - Profile
+  /profile/{userID}/posts:
+    get:
+      consumes:
+      - application/json
+      description: Ищет посты пользователя по ID с поддержкой пагинации через параметры
+        page и page_size
+      parameters:
+      - description: Bearer <jwt токен>
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID (UUID)
+        example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
+        format: uuid
+        in: path
+        name: userID
+        required: true
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Размер страницы
+        in: query
+        maximum: 30
+        minimum: 1
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Посты найдены
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "404":
+          description: У пользователя нет постов
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      summary: Поиск постов пользователя
+      tags:
+      - Posts
   /profile/me:
     get:
       consumes:

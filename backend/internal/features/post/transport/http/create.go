@@ -24,7 +24,7 @@ import (
 // @Produce json
 // @Param request body CreatePostDTO true "parent_id, image_url - необязательные параметры"
 // @Param Authorization header string true "Bearer <jwt токен>"
-// @Success 201 {object} CreatePostDTOResponse "Пост создан"
+// @Success 201 {object} PostDTOResponse "Пост создан"
 // @Failure 400 {object} domain.CustomError "Неверный запрос (content > 280 символов; userID неправильного формата)"
 // @Failure 401 {object} domain.CustomError "Неверные учетные данные"
 // @Failure 404 {object} domain.CustomError "Не удалось найти пост с данным parent_id"
@@ -57,7 +57,7 @@ func (h *PostsHTTPHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respWriter.JSONResponse(createPostToResponse(post), http.StatusCreated)
+	respWriter.JSONResponse(postToResponse(post), http.StatusCreated)
 }
 
 func getUserUUIDFromContext(ctx context.Context) (uuid.UUID, error) {

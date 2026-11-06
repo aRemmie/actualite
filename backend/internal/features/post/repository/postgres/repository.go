@@ -54,3 +54,11 @@ func toPostWithAuthorDomain(m PostModel) domain.PostWithAuthor {
 
 	return domain.NewPostWithAuthor(post, author)
 }
+
+func toPostWithAuthorDomains(models []PostModel) []domain.PostWithAuthor {
+	p := make([]domain.PostWithAuthor, len(models))
+	for i, model := range models {
+		p[i] = toPostWithAuthorDomain(model)
+	}
+	return p
+}

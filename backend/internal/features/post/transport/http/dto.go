@@ -12,7 +12,7 @@ type CreatePostDTO struct {
 	ImageURL *string    `json:"image_url" example:"https://example.com/image.jpg" validate:"omitempty,url"`
 }
 
-type CreatePostDTOResponse struct {
+type PostDTOResponse struct {
 	ID         uuid.UUID  `json:"id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
 	UserID     uuid.UUID  `json:"user_id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
 	ParentID   *uuid.UUID `json:"parent_id" example:"123e4567-e89b-12d3-a456-426614174000"`
@@ -22,7 +22,7 @@ type CreatePostDTOResponse struct {
 	CreatedAt  time.Time  `json:"created_at" example:"2026-03-25T12:00:41.267Z"`
 }
 
-type GetPostByIdDTOResponse struct {
+type PostWithAuthorDTOResponse struct {
 	ID          uuid.UUID  `json:"id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
 	UserID      uuid.UUID  `json:"user_id" example:"3fa85f64-5717-4562-b3fc-2c963f66afa6"`
 	Username    string     `json:"username" example:"testuser"`
@@ -36,8 +36,20 @@ type GetPostByIdDTOResponse struct {
 	DeletedAt   time.Time  `json:"deleted_at" example:"2026-03-25T12:00:41.267Z"`
 }
 
-func createPostToResponse(p domain.Post) CreatePostDTOResponse {
-	return CreatePostDTOResponse{
+type paginationDTO struct {
+	Page       uint64 `json:"page" example:"1"`
+	PageSize   uint64 `json:"page_size" example:"20"`
+	Total      uint64 `json:"total" example:"20"`
+	TotalPages uint64 `json:"total_pages" example:"100"`
+}
+
+type PostsWithPaginationDTOResponse struct {
+	Posts      []PostWithAuthorDTOResponse `json:"posts"`
+	Pagination paginationDTO               `json:"pagination"`
+}
+
+func postToResponse(p domain.Post) PostDTOResponse {
+	return PostDTOResponse{
 		ID:         p.ID,
 		UserID:     p.UserID,
 		ParentID:   p.ParentID,
@@ -48,8 +60,8 @@ func createPostToResponse(p domain.Post) CreatePostDTOResponse {
 	}
 }
 
-func getPostByIDToResponse(p domain.PostWithAuthor) GetPostByIdDTOResponse {
-	return GetPostByIdDTOResponse{
+func postWithAuthorToResponse(p domain.PostWithAuthor) PostWithAuthorDTOResponse {
+	return PostWithAuthorDTOResponse{
 		ID:          p.Post.ID,
 		UserID:      p.Post.UserID,
 		Username:    p.Author.Username,
@@ -61,5 +73,28 @@ func getPostByIDToResponse(p domain.PostWithAuthor) GetPostByIdDTOResponse {
 		LikesCount:  p.Post.LikesCount,
 		CreatedAt:   p.Post.CreatedAt,
 		DeletedAt:   p.Post.DeletedAt,
+	}
+}
+
+func paginationToResponse(p domain.Pagination) paginationDTO {
+	return paginationDTO{
+		Page:       p.Page,
+		PageSize:   p.PageSize,
+		Total:      p.Total,
+		TotalPages: p.TotalPages,
+	}
+}
+
+func postsWithPaginationToResponse(posts []domain.PostWithAuthor, pagination domain.Pagination) PostsWithPaginationDTOResponse {
+	postsResponse := make([]PostWithAuthorDTOResponse, len(posts))
+	for i, post := range posts {
+		postsResponse[i] = postWithAuthorToResponse(post)
+	}
+
+	paginationResponse := paginationToResponse(pagination)
+
+	return PostsWithPaginationDTOResponse{
+		Posts:      postsResponse,
+		Pagination: paginationResponse,
 	}
 }
