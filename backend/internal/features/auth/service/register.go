@@ -9,16 +9,17 @@ import (
 	"actualiteco/actualite/internal/core/domain"
 	hash_utils "actualiteco/actualite/internal/utils/hash"
 
-	"github.com/google/uuid"
+	"uuid"
+
 	"github.com/jackc/pgx/v5/pgconn"
 )
 
-func (s *AuthService) RegisterUser(ctx context.Context, user domain.User, password string) (*domain.User, error) {
-	user.ID = uuid.NewString()
+func (s *AuthService) RegisterUser(ctx context.Context, user domain.User, password string) (domain.User, error) {
+	user.ID = uuid.New().String()
 
 	hash, err := hash_utils.HashPassword(password)
 	if err != nil {
-		return nil, fmt.Errorf("hash generating: %w", domain.ErrInternal)
+		return domain.User{}, fmt.Errorf("hash generating: %w", domain.ErrInternal)
 	}
 
 	user.Password = hash
@@ -29,11 +30,11 @@ func (s *AuthService) RegisterUser(ctx context.Context, user domain.User, passwo
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == "23505" {
-				return nil, fmt.Errorf("email is already booked: %w", domain.ErrEmailAlreadyUsed)
+				return domain.User{}, fmt.Errorf("email is already booked: %w", domain.ErrEmailAlreadyUsed)
 			}
 		}
 
-		return nil, fmt.Errorf("saving to database: %w", domain.ErrInternal)
+		return domain.User{}, fmt.Errorf("saving to database: %w", domain.ErrInternal)
 	}
 
 	return createdUser, nil

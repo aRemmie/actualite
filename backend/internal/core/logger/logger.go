@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -10,10 +11,27 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
+type key string
+
+var loggerKey key = "log"
+
 type Logger struct {
 	*zap.Logger
 
 	file *os.File
+}
+
+func FromContext(ctx context.Context) *Logger {
+	log, ok := ctx.Value(loggerKey).(*Logger)
+	if !ok {
+		panic("no logger in context")
+	}
+
+	return log
+}
+
+func InContext(ctx context.Context, log *Logger) context.Context {
+	return context.WithValue(ctx, loggerKey, log)
 }
 
 func NewLogger(cfg Config) (*Logger, error) {

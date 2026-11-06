@@ -5,8 +5,9 @@ var (
 	ErrInternal         = NewCustomError("INTERNAL_ERROR", "internal server error")
 	ErrUnauthorized     = NewCustomError("UNAUTHORIZED", "invalid authorization")
 	ErrEmailAlreadyUsed = NewCustomError("EMAIL_ALREADY_USED", "email is already in use")
-	ErrForbidden        = NewCustomError("FORBIDDEN", "...")
+	ErrForbidden        = NewCustomError("FORBIDDEN", "forbidden")
 	ErrNotFound         = NewCustomError("NOT_FOUND", "not found")
+	ErrConflict         = NewCustomError("CONFLICT", "conflict")
 )
 
 type CustomError struct {

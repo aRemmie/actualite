@@ -19,6 +19,10 @@ type HTTPServer struct {
 	log *logger.Logger
 }
 
+type RouteProvider interface {
+	Routes() []Route
+}
+
 func NewHTTPServer(config Config, logger *logger.Logger) *HTTPServer {
 	return &HTTPServer{
 		mux: http.NewServeMux(),
@@ -27,7 +31,7 @@ func NewHTTPServer(config Config, logger *logger.Logger) *HTTPServer {
 	}
 }
 
-func (s *HTTPServer) RegisterRoutes(routes ...Route) {
+func (s *HTTPServer) registerRoutes(routes ...Route) {
 	for _, route := range routes {
 
 		pattern := fmt.Sprintf("%s %s", route.Method, route.URL)
@@ -40,6 +44,12 @@ func (s *HTTPServer) RegisterRoutes(routes ...Route) {
 		)
 
 		s.mux.Handle(pattern, handlerWithMiddleware)
+	}
+}
+
+func (s *HTTPServer) RegisterRoutes(handlers ...RouteProvider) {
+	for _, handler := range handlers {
+		s.registerRoutes(handler.Routes()...)
 	}
 }
 

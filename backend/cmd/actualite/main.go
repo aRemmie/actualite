@@ -13,9 +13,11 @@ import (
 	"actualiteco/actualite/internal/core/logger"
 	postgres_pool "actualiteco/actualite/internal/core/repository/postgres"
 	"actualiteco/actualite/internal/core/transport/server"
-	auth_repository "actualiteco/actualite/internal/features/auth/repository/postgres"
 	auth_service "actualiteco/actualite/internal/features/auth/service"
 	auth_transport "actualiteco/actualite/internal/features/auth/transport/http"
+	users_repository "actualiteco/actualite/internal/features/profile/repository/postgres"
+	profile_service "actualiteco/actualite/internal/features/profile/service"
+	profile_transport "actualiteco/actualite/internal/features/profile/transport/http"
 )
 
 // @title actualiteco/actualite
@@ -47,11 +49,15 @@ func main() {
 	serv.RegisterSwagger()
 
 	log.Debug("initializing auth service")
-	authRepo := auth_repository.NewAuthRepository(pool)
-	authService := auth_service.NewAuthService(authRepo)
+	usersRepo := users_repository.NewAuthRepository(pool)
+	authService := auth_service.NewAuthService(usersRepo)
 	authHandler := auth_transport.NewAuthHandler(authService)
 
-	serv.RegisterRoutes(authHandler.Routes()...)
+	log.Debug("initializing profile service")
+	profileService := profile_service.NewProfileService(usersRepo)
+	profileHandler := profile_transport.NewProfileHTTPHandler(profileService)
+
+	serv.RegisterRoutes(authHandler, profileHandler)
 
 	if err = serv.Run(ctx); err != nil {
 		log.Error("server error occured", zap.Error(err))

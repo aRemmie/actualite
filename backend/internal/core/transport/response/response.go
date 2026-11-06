@@ -74,8 +74,12 @@ func (h *HTTPResponseHandler) MapError(err error) {
 		return
 	case errors.Is(err, domain.ErrEmailAlreadyUsed):
 		h.ErrorResponse(domain.ErrEmailAlreadyUsed, http.StatusConflict)
+		return
 	case errors.Is(err, domain.ErrForbidden):
 		h.ErrorResponse(domain.ErrForbidden, http.StatusForbidden)
+		return
+	case errors.Is(err, domain.ErrConflict):
+		h.ErrorResponse(domain.ErrConflict, http.StatusConflict)
 		return
 	default:
 		h.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
