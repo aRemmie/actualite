@@ -1,0 +1,36 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 32px max(24px, 8vw);
+    background: var(--bg-primary);
+}
+
+.brand {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    letter-spacing: -0.02em;
+    margin-bottom: 40px;
+}
+
+.code {
+    font-family: var(--font-serif);
+    font-size: clamp(64px, 12vw, 110px);
+    line-height: 0.9;
+    color: var(--accent-soft);
+}
+
+.title {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 400;
+    margin: 8px 0;
+}
+
+.text {
+    max-width: 280px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 18px;
+}

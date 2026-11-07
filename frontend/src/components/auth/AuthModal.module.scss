@@ -1,0 +1,18 @@
+.modalContent {
+    width: 100%;
+}
+
+.switchSection {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--auth-switch-border);
+    transition: border-color 0.3s ease;
+}
+
+.switchText {
+    text-align: center;
+    color: var(--auth-switch-text-color);
+    font-size: 13px;
+    margin-bottom: 12px;
+    transition: color 0.3s ease;
+}
