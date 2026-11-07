@@ -45,6 +45,8 @@ func toPostDomain(m PostModel) domain.Post {
 
 func toPostWithAuthorDomain(m PostModel) domain.PostWithAuthor {
 	post := toPostDomain(m)
+	post.DeletedAt = m.DeletedAt
+
 	author := domain.UserSummary{
 		ID:          m.UserID,
 		Username:    m.Username,

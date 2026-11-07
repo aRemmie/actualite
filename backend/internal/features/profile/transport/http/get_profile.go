@@ -17,12 +17,12 @@ import (
 // @Accept json
 // @Produce json
 // @Param userID path string true "User ID"
-// @Param Authorization header string true "Bearer <jwt токен>"
 // @Success 200 {object} ProfileResponse
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
 // @Failure 403 {object} domain.CustomError "Пользователь неавторизован"
 // @Failure 500 {object}  domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile/{userID} [get]
+// @Security BearerAuth
 func (h *ProfileHTTPHandler) GetUserProfile(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)

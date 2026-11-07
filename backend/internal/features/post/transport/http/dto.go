@@ -33,7 +33,7 @@ type PostWithAuthorDTOResponse struct {
 	ImageURL    *string    `json:"image_url" example:"https://example.com/image.jpg"`
 	LikesCount  uint       `json:"likes_count" example:"10"`
 	CreatedAt   time.Time  `json:"created_at" example:"2026-03-25T12:00:41.267Z"`
-	DeletedAt   time.Time  `json:"deleted_at" example:"2026-03-25T12:00:41.267Z"`
+	DeletedAt   *time.Time `json:"deleted_at" example:"2026-03-25T12:00:41.267Z"`
 }
 
 type paginationDTO struct {

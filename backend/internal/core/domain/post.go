@@ -15,7 +15,7 @@ type Post struct {
 	Content    string     `validate:"required,min=1,max=280"`
 	ImageURL   *string    `validate:"omitempty,url"`
 	LikesCount uint
-	DeletedAt  time.Time
+	DeletedAt  *time.Time
 	CreatedAt  time.Time
 }
 

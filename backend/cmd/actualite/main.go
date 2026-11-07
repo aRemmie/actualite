@@ -26,6 +26,10 @@ import (
 // @title actualiteco/actualite
 // @version 1.0
 // @host 127.0.0.1:8080
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Введите "Bearer" и JWT-токен через пробел.
 func main() {
 	if err := godotenv.Load(); err != nil {
 		fmt.Println("error with reading .env")

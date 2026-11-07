@@ -16,7 +16,6 @@ import (
 // @Tags Posts
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer <jwt токен>"
 // @Param userID path string true "User ID (UUID)" Format(uuid) Example(3fa85f64-5717-4562-b3fc-2c963f66afa6)
 // @Param page query int false "Номер страницы"  minimum(1)  default(1)
 // @Param page_size query int false "Размер страницы"  minimum(1)  maximum(30)  default(20)
@@ -26,18 +25,19 @@ import (
 // @Failure 404 {object} domain.CustomError "У пользователя нет постов"
 // @Failure 500 {object} domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile/{userID}/posts [get]
+// @Security BearerAuth
 func (h *PostsHTTPHandler) GetPostsByUserID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)
 	respWriter := response.NewResponseHandler(log, w)
 
-	pageStr, err := httputils.GetUintQueryParam(r, "page")
+	page, err := httputils.GetUintQueryParam(r, "page")
 	if err != nil {
 		respWriter.MapError(err)
 		return
 	}
 
-	pageSizeStr, err := httputils.GetUintQueryParam(r, "page_size")
+	pageSize, err := httputils.GetUintQueryParam(r, "page_size")
 	if err != nil {
 		respWriter.MapError(err)
 		return
@@ -49,8 +49,7 @@ func (h *PostsHTTPHandler) GetPostsByUserID(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	posts, pagination, err := h.PostsService.GetPostsByUserID(ctx, userID, pageStr, pageSizeStr)
-
+	posts, pagination, err := h.PostsService.GetPostsByUserID(ctx, userID, page, pageSize)
 	if err != nil {
 		log.Error("get posts by user", zap.Error(err))
 		respWriter.MapError(err)

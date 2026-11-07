@@ -286,11 +286,6 @@ paths:
         name: postID
         required: true
         type: string
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -314,7 +309,64 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Поиск поста по ID
+      tags:
+      - Posts
+  /posts/{postID}/replies:
+    get:
+      consumes:
+      - application/json
+      description: Ищет комментарии на пост по его ID с поддержкой пагинации через
+        параметры page и page_size
+      parameters:
+      - description: Post ID (UUID)
+        example: a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d
+        format: uuid
+        in: path
+        name: postID
+        required: true
+        type: string
+      - default: 1
+        description: Номер страницы
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Размер страницы
+        in: query
+        maximum: 30
+        minimum: 1
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Посты найдены
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "404":
+          description: У поста нет комментариев
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
+      summary: Поиск комментариев на пост
       tags:
       - Posts
   /posts/create:
@@ -329,11 +381,6 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/internal_features_post_transport_http.CreatePostDTO'
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -358,6 +405,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Создание поста
       tags:
       - Posts
@@ -367,11 +416,6 @@ paths:
       - application/json
       description: Обновить профиль пользователя (display_name, username, status)
       parameters:
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: Информация профиля
         in: body
         name: request
@@ -401,6 +445,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Обновить профиль пользователя
       tags:
       - Profile
@@ -413,11 +459,6 @@ paths:
       - description: User ID
         in: path
         name: userID
-        required: true
-        type: string
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
         required: true
         type: string
       produces:
@@ -439,6 +480,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Получить профиль пользователя
       tags:
       - Profile
@@ -449,11 +492,6 @@ paths:
       description: Ищет посты пользователя по ID с поддержкой пагинации через параметры
         page и page_size
       parameters:
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
-        required: true
-        type: string
       - description: User ID (UUID)
         example: 3fa85f64-5717-4562-b3fc-2c963f66afa6
         format: uuid
@@ -497,6 +535,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Поиск постов пользователя
       tags:
       - Posts
@@ -505,12 +545,6 @@ paths:
       consumes:
       - application/json
       description: Получить профиль пользователя с постами по JWT
-      parameters:
-      - description: Bearer <jwt токен>
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses:
@@ -530,6 +564,8 @@ paths:
           description: Внутренняя ошибка сервера
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
       summary: Получить профиль пользователя по JWT
       tags:
       - Profile
@@ -563,4 +599,10 @@ paths:
       summary: Регистрация пользователя
       tags:
       - Auth
+securityDefinitions:
+  BearerAuth:
+    description: Введите "Bearer" и JWT-токен через пробел.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

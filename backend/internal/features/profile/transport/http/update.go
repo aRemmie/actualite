@@ -16,7 +16,6 @@ import (
 // @Tags Profile
 // @Accept json
 // @Produce json
-// @Param Authorization header string true "Bearer <jwt токен>"
 // @Param request body UpdateProfileRequest true "Информация профиля"
 // @Success 200 {object} ProfileResponse "Успешный запрос"
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
@@ -24,6 +23,7 @@ import (
 // @Failure 409 {object} domain.CustomError "Пользователь с таким юзернеймом уже существует"
 // @Failure 500 {object}  domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile [patch]
+// @Security BearerAuth
 func (h *ProfileHTTPHandler) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)

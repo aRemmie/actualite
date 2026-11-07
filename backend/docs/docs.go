@@ -69,6 +69,11 @@ const docTemplate = `{
         },
         "/posts/create": {
             "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Создает пост длиной \u003c= 280 символов",
                 "consumes": [
                     "application/json"
@@ -89,13 +94,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/internal_features_post_transport_http.CreatePostDTO"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {
@@ -134,6 +132,11 @@ const docTemplate = `{
         },
         "/posts/{postID}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Ищет пост по ID и возвращает информацию о посте + краткую информацию об авторе (username, display_name, avatar_url)",
                 "consumes": [
                     "application/json"
@@ -153,13 +156,6 @@ const docTemplate = `{
                         "description": "Post ID (UUID)",
                         "name": "postID",
                         "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
                         "required": true
                     }
                 ],
@@ -197,8 +193,93 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts/{postID}/replies": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Ищет комментарии на пост по его ID с поддержкой пагинации через параметры page и page_size",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Поиск комментариев на пост",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "example": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
+                        "description": "Post ID (UUID)",
+                        "name": "postID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Номер страницы",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 30,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Размер страницы",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Посты найдены",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "У поста нет комментариев",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
         "/profile": {
             "patch": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Обновить профиль пользователя (display_name, username, status)",
                 "consumes": [
                     "application/json"
@@ -211,13 +292,6 @@ const docTemplate = `{
                 ],
                 "summary": "Обновить профиль пользователя",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "description": "Информация профиля",
                         "name": "request",
@@ -264,6 +338,11 @@ const docTemplate = `{
         },
         "/profile/me": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Получить профиль пользователя с постами по JWT",
                 "consumes": [
                     "application/json"
@@ -275,15 +354,6 @@ const docTemplate = `{
                     "Profile"
                 ],
                 "summary": "Получить профиль пользователя по JWT",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -314,6 +384,11 @@ const docTemplate = `{
         },
         "/profile/{userID}": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Получить профиль пользователя с постами по id пользователя",
                 "consumes": [
                     "application/json"
@@ -331,13 +406,6 @@ const docTemplate = `{
                         "description": "User ID",
                         "name": "userID",
                         "in": "path",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
                         "required": true
                     }
                 ],
@@ -371,6 +439,11 @@ const docTemplate = `{
         },
         "/profile/{userID}/posts": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Ищет посты пользователя по ID с поддержкой пагинации через параметры page и page_size",
                 "consumes": [
                     "application/json"
@@ -383,13 +456,6 @@ const docTemplate = `{
                 ],
                 "summary": "Поиск постов пользователя",
                 "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Bearer \u003cjwt токен\u003e",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    },
                     {
                         "type": "string",
                         "format": "uuid",
@@ -819,6 +885,14 @@ const docTemplate = `{
                     "example": "username"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Введите \"Bearer\" и JWT-токен через пробел.",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`
