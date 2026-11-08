@@ -1,7 +1,6 @@
 package profile_transport
 
 import (
-	"actualiteco/actualite/internal/core/domain"
 	"actualiteco/actualite/internal/core/logger"
 	"actualiteco/actualite/internal/core/transport/response"
 	httputils "actualiteco/actualite/internal/utils/http"
@@ -32,14 +31,14 @@ func (h *ProfileHTTPHandler) Follow(w http.ResponseWriter, r *http.Request) {
 	followerID, err := getUserUUIDFromContext(ctx)
 	if err != nil {
 		log.Error("get userID from context", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
+		respWriter.MapError(err)
 		return
 	}
 
 	followingID, err := httputils.GetUUIDPathValue(r, "userID")
 	if err != nil {
 		log.Info("get userID from path value", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
+		respWriter.MapError(err)
 		return
 	}
 
@@ -73,14 +72,14 @@ func (h *ProfileHTTPHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	followerID, err := getUserUUIDFromContext(ctx)
 	if err != nil {
 		log.Error("get userID from context", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInternal, http.StatusInternalServerError)
+		respWriter.MapError(err)
 		return
 	}
 
 	followingID, err := httputils.GetUUIDPathValue(r, "userID")
 	if err != nil {
 		log.Info("get userID from path value", zap.Error(err))
-		respWriter.ErrorResponse(domain.ErrInvalidRequest, http.StatusBadRequest)
+		respWriter.MapError(err)
 		return
 	}
 
