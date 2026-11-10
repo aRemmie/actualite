@@ -6,23 +6,24 @@ import (
 	"uuid"
 )
 
-func (r *PostsRepository) GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, error) {
+func (r *PostsRepository) GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, bool, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
 	query := `
-		SELECT COUNT(*)
-		FROM posts
-		WHERE user_id = $1
+		SELECT
+			(SELECT COUNT(*) FROM posts WHERE user_id = $1) AS posts_count,
+			EXISTS(SELECT 1 FROM users WHERE id = $1) AS user_exists;
 	`
 
 	row := r.ConnPool.QueryRow(ctxTimeout, query, userID)
 
 	var count uint64
-	err := row.Scan(&count)
+	var userExists bool
+	err := row.Scan(&count, &userExists)
 	if err != nil {
-		return 0, fmt.Errorf("get count: %w", err)
+		return 0, false, fmt.Errorf("get count: %w", err)
 	}
 
-	return count, nil
+	return count, userExists, nil
 }

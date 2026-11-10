@@ -15,9 +15,12 @@ func (s *PostsService) GetReplies(ctx context.Context, postID uuid.UUID, page, p
 		return nil, domain.Pagination{}, fmt.Errorf("get offset and limit: %w", err)
 	}
 
-	count, err := s.postsRepo.GetCountOfReplies(ctx, postID)
+	count, postExists, err := s.postsRepo.GetCountOfReplies(ctx, postID)
 	if err != nil {
 		return nil, domain.Pagination{}, fmt.Errorf("get count of posts: %w", err)
+	}
+	if !postExists {
+		return nil, domain.Pagination{}, fmt.Errorf("no post with id=%s: %w", postID.String(), domain.ErrNotFound)
 	}
 	if count == 0 {
 		return nil, domain.Pagination{}, fmt.Errorf("no replies for post with id=%s: %w", postID.String(), domain.ErrNotFound)

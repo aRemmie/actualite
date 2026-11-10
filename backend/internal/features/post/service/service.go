@@ -16,8 +16,8 @@ type PostsRepository interface {
 	GetPostsByUserID(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
 	GetReplies(ctx context.Context, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
 
-	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, error)
-	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, error)
+	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
+	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, bool, error)
 }
 
 func New(postsRepo PostsRepository) *PostsService {

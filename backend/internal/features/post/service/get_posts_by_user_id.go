@@ -15,9 +15,12 @@ func (s *PostsService) GetPostsByUserID(ctx context.Context, userID uuid.UUID, p
 		return nil, domain.Pagination{}, fmt.Errorf("get offset and limit: %w", err)
 	}
 
-	count, err := s.postsRepo.GetCountOfPostsByUserID(ctx, userID)
+	count, userExists, err := s.postsRepo.GetCountOfPostsByUserID(ctx, userID)
 	if err != nil {
 		return nil, domain.Pagination{}, fmt.Errorf("get count of posts: %w", err)
+	}
+	if !userExists {
+		return nil, domain.Pagination{}, fmt.Errorf("no user with id=%s: %w", userID.String(), domain.ErrNotFound)
 	}
 	if count == 0 {
 		return nil, domain.Pagination{}, fmt.Errorf("no posts from user with id=%s: %w", userID.String(), domain.ErrNotFound)

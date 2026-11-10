@@ -2,10 +2,9 @@ package domain
 
 import (
 	"fmt"
+	"strings"
 	"time"
 	"uuid"
-
-	"github.com/go-playground/validator/v10"
 )
 
 type Post struct {
@@ -36,9 +35,9 @@ func NewPost(userID uuid.UUID, content string, imageURL *string, parentID *uuid.
 		ID:        uuid.New(),
 		UserID:    userID,
 		ParentID:  parentID,
-		Content:   content,
+		Content:   strings.TrimSpace(content),
 		ImageURL:  imageURL,
-		CreatedAt: time.Now(),
+		CreatedAt: time.Now().UTC(),
 	}
 
 	if err := post.Validate(); err != nil {
@@ -55,10 +54,8 @@ func NewPostWithAuthor(post Post, author UserSummary) PostWithAuthor {
 	}
 }
 
-func (p *Post) Validate() error {
-	validator := validator.New()
-
-	if err := validator.Struct(p); err != nil {
+func (p Post) Validate() error {
+	if err := validate.Struct(p); err != nil {
 		return fmt.Errorf("validator struct: %w: %w", err, ErrInvalidRequest)
 	}
 
