@@ -20,9 +20,9 @@ type profileService interface {
 	Unfollow(ctx context.Context, followerID, followingID uuid.UUID) error
 }
 
-func NewProfileHTTPHandler(serv profileService) *ProfileHTTPHandler {
+func NewProfileHTTPHandler(profileService profileService) *ProfileHTTPHandler {
 	return &ProfileHTTPHandler{
-		service: serv,
+		service: profileService,
 	}
 }
 

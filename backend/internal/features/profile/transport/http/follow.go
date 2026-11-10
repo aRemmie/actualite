@@ -1,6 +1,7 @@
 package profile_transport
 
 import (
+	_ "actualiteco/actualite/internal/core/domain"
 	"actualiteco/actualite/internal/core/logger"
 	"actualiteco/actualite/internal/core/transport/response"
 	httputils "actualiteco/actualite/internal/utils/http"
@@ -16,13 +17,13 @@ import (
 // @Accept json
 // @Produce json
 // @Param userID path string true "User ID"
-// @Param Authorization header string true "Bearer <jwt токен>"
 // @Success 200 {object} FollowResponse "Успешный запрос"
 // @Failure 400 {object} domain.CustomError "Неверный запрос (в т.ч. подписка на себя или повторная подписка)"
 // @Failure 401 {object} domain.CustomError "Пользователь неавторизован"
 // @Failure 404 {object} domain.CustomError "Пользователь не найден"
 // @Failure 500 {object}  domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile/{userID}/follow [post]
+// @Security BearerAuth
 func (h *ProfileHTTPHandler) Follow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)
@@ -58,12 +59,12 @@ func (h *ProfileHTTPHandler) Follow(w http.ResponseWriter, r *http.Request) {
 // @Accept json
 // @Produce json
 // @Param userID path string true "User ID"
-// @Param Authorization header string true "Bearer <jwt токен>"
 // @Success 200 {object} FollowResponse "Успешный запрос"
 // @Failure 400 {object} domain.CustomError "Неверный запрос (в т.ч. отписка от себя или отсутствие подписки)"
 // @Failure 401 {object} domain.CustomError "Пользователь неавторизован"
 // @Failure 500 {object}  domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile/{userID}/unfollow [post]
+// @Security BearerAuth
 func (h *ProfileHTTPHandler) Unfollow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := logger.FromContext(ctx)
