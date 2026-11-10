@@ -67,219 +67,8 @@ const docTemplate = `{
                 }
             }
         },
-        "/posts/create": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Создает пост длиной \u003c= 280 символов",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Создание поста",
-                "parameters": [
-                    {
-                        "description": "parent_id, image_url - необязательные параметры",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.CreatePostDTO"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Пост создан",
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.PostDTOResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос (content \u003e 280 символов; userID неправильного формата)",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "401": {
-                        "description": "Неверные учетные данные",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "404": {
-                        "description": "Не удалось найти пост с данным parent_id",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
-                        }
-                    }
-                }
-            }
-        },
-        "/posts/{postID}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Ищет пост по ID и возвращает информацию о посте + краткую информацию об авторе (username, display_name, avatar_url)",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Поиск поста по ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "description": "Post ID (UUID)",
-                        "name": "postID",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Пост найден",
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "401": {
-                        "description": "Не удалось аутентифицировать пользователя",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "404": {
-                        "description": "Пост не найден",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
-                        }
-                    }
-                }
-            }
-        },
-        "/posts/{postID}/replies": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Ищет комментарии на пост по его ID с поддержкой пагинации через параметры page и page_size",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Posts"
-                ],
-                "summary": "Поиск комментариев на пост",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "format": "uuid",
-                        "example": "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
-                        "description": "Post ID (UUID)",
-                        "name": "postID",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Номер страницы",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 30,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 20,
-                        "description": "Размер страницы",
-                        "name": "page_size",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Посты найдены",
-                        "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
-                        }
-                    },
-                    "400": {
-                        "description": "Неверный запрос",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "401": {
-                        "description": "Неверные учетные данные",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "404": {
-                        "description": "У поста нет комментариев",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка сервера",
-                        "schema": {
-                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
-                        }
-                    }
-                }
-            }
-        },
         "/profile": {
             "patch": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Обновить профиль пользователя (display_name, username, status)",
                 "consumes": [
                     "application/json"
@@ -292,6 +81,13 @@ const docTemplate = `{
                 ],
                 "summary": "Обновить профиль пользователя",
                 "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
                     {
                         "description": "Информация профиля",
                         "name": "request",
@@ -338,11 +134,6 @@ const docTemplate = `{
         },
         "/profile/me": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Получить профиль пользователя с постами по JWT",
                 "consumes": [
                     "application/json"
@@ -354,6 +145,15 @@ const docTemplate = `{
                     "Profile"
                 ],
                 "summary": "Получить профиль пользователя по JWT",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -384,11 +184,6 @@ const docTemplate = `{
         },
         "/profile/{userID}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Получить профиль пользователя с постами по id пользователя",
                 "consumes": [
                     "application/json"
@@ -406,6 +201,13 @@ const docTemplate = `{
                         "description": "User ID",
                         "name": "userID",
                         "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
                         "required": true
                     }
                 ],
@@ -437,14 +239,9 @@ const docTemplate = `{
                 }
             }
         },
-        "/profile/{userID}/posts": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Ищет посты пользователя по ID с поддержкой пагинации через параметры page и page_size",
+        "/profile/{userID}/follow": {
+            "post": {
+                "description": "Подписаться авторизованным пользователем на другого пользователя по userID",
                 "consumes": [
                     "application/json"
                 ],
@@ -452,58 +249,103 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Posts"
+                    "Profile"
                 ],
-                "summary": "Поиск постов пользователя",
+                "summary": "Подписаться на пользователя",
                 "parameters": [
                     {
                         "type": "string",
-                        "format": "uuid",
-                        "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                        "description": "User ID (UUID)",
+                        "description": "User ID",
                         "name": "userID",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 1,
-                        "description": "Номер страницы",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "maximum": 30,
-                        "minimum": 1,
-                        "type": "integer",
-                        "default": 20,
-                        "description": "Размер страницы",
-                        "name": "page_size",
-                        "in": "query"
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Посты найдены",
+                        "description": "Успешный запрос",
                         "schema": {
-                            "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
+                            "$ref": "#/definitions/internal_features_profile_transport_http.FollowResponse"
                         }
                     },
                     "400": {
-                        "description": "Неверный запрос",
+                        "description": "Неверный запрос (в т.ч. подписка на себя или повторная подписка)",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
                     },
                     "401": {
-                        "description": "Неверные учетные данные",
+                        "description": "Пользователь неавторизован",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
                     },
                     "404": {
-                        "description": "У пользователя нет постов",
+                        "description": "Пользователь не найден",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
+        "/profile/{userID}/unfollow": {
+            "post": {
+                "description": "Отписаться авторизованным пользователем от другого пользователя по userID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Profile"
+                ],
+                "summary": "Отписаться от пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "userID",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Bearer \u003cjwt токен\u003e",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Успешный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_profile_transport_http.FollowResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос (в т.ч. отписка от себя или отсутствие подписки)",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Пользователь неавторизован",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
@@ -689,142 +531,12 @@ const docTemplate = `{
                 }
             }
         },
-        "internal_features_post_transport_http.CreatePostDTO": {
-            "type": "object",
-            "required": [
-                "content"
-            ],
-            "properties": {
-                "content": {
-                    "type": "string",
-                    "maxLength": 280,
-                    "minLength": 1,
-                    "example": "Hello, world!"
-                },
-                "image_url": {
-                    "type": "string",
-                    "example": "https://example.com/image.jpg"
-                },
-                "parent_id": {
-                    "type": "string",
-                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                }
-            }
-        },
-        "internal_features_post_transport_http.PostDTOResponse": {
+        "internal_features_profile_transport_http.FollowResponse": {
             "type": "object",
             "properties": {
-                "content": {
+                "message": {
                     "type": "string",
-                    "example": "Hello, world!"
-                },
-                "created_at": {
-                    "type": "string",
-                    "example": "2026-03-25T12:00:41.267Z"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                },
-                "image_url": {
-                    "type": "string",
-                    "example": "https://example.com/image.jpg"
-                },
-                "likes_count": {
-                    "type": "integer",
-                    "example": 10
-                },
-                "parent_id": {
-                    "type": "string",
-                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                }
-            }
-        },
-        "internal_features_post_transport_http.PostWithAuthorDTOResponse": {
-            "type": "object",
-            "properties": {
-                "avatar_url": {
-                    "type": "string",
-                    "example": "https://example.com/avatar.jpg"
-                },
-                "content": {
-                    "type": "string",
-                    "example": "Hello, world!"
-                },
-                "created_at": {
-                    "type": "string",
-                    "example": "2026-03-25T12:00:41.267Z"
-                },
-                "deleted_at": {
-                    "type": "string",
-                    "example": "2026-03-25T12:00:41.267Z"
-                },
-                "display_name": {
-                    "type": "string",
-                    "example": "test"
-                },
-                "id": {
-                    "type": "string",
-                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                },
-                "image_url": {
-                    "type": "string",
-                    "example": "https://example.com/image.jpg"
-                },
-                "likes_count": {
-                    "type": "integer",
-                    "example": 10
-                },
-                "parent_id": {
-                    "type": "string",
-                    "example": "123e4567-e89b-12d3-a456-426614174000"
-                },
-                "user_id": {
-                    "type": "string",
-                    "example": "3fa85f64-5717-4562-b3fc-2c963f66afa6"
-                },
-                "username": {
-                    "type": "string",
-                    "example": "testuser"
-                }
-            }
-        },
-        "internal_features_post_transport_http.PostsWithPaginationDTOResponse": {
-            "type": "object",
-            "properties": {
-                "pagination": {
-                    "$ref": "#/definitions/internal_features_post_transport_http.paginationDTO"
-                },
-                "posts": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/internal_features_post_transport_http.PostWithAuthorDTOResponse"
-                    }
-                }
-            }
-        },
-        "internal_features_post_transport_http.paginationDTO": {
-            "type": "object",
-            "properties": {
-                "page": {
-                    "type": "integer",
-                    "example": 1
-                },
-                "page_size": {
-                    "type": "integer",
-                    "example": 20
-                },
-                "total": {
-                    "type": "integer",
-                    "example": 20
-                },
-                "total_pages": {
-                    "type": "integer",
-                    "example": 100
+                    "example": "success"
                 }
             }
         },
@@ -850,6 +562,14 @@ const docTemplate = `{
                 "email_verified": {
                     "type": "boolean",
                     "example": false
+                },
+                "followers_count": {
+                    "type": "integer",
+                    "example": 10
+                },
+                "following_count": {
+                    "type": "integer",
+                    "example": 5
                 },
                 "id": {
                     "type": "string",
@@ -885,14 +605,6 @@ const docTemplate = `{
                     "example": "username"
                 }
             }
-        }
-    },
-    "securityDefinitions": {
-        "BearerAuth": {
-            "description": "Введите \"Bearer\" и JWT-токен через пробел.",
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
         }
     }
 }`

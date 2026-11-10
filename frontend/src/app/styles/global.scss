@@ -1,0 +1,137 @@
+@use './themes/dark';
+@use './themes/light';
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    min-height: 100%;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 42%;
+    left: -159px;
+    width: 318px;
+    height: 318px;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--glow-opacity);
+    filter: blur(75px);
+    transform: scale(1.7);
+    background:
+        radial-gradient(circle 94px at 159px 159px, #547aff 99%, transparent 100%),
+        radial-gradient(circle 118px at 159px 159px, #ff005c 99%, transparent 100%),
+        radial-gradient(circle 159px at 159px 159px, #ffb800 99%, transparent 100%);
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('../../assets/grain.png');
+    background-size: 100px 100px;
+    opacity: var(--grain-opacity);
+    mix-blend-mode: overlay;
+}
+
+.app {
+    position: relative;
+    z-index: 1;
+}
+
+button:focus-visible,
+a:focus-visible {
+    outline: 1px solid var(--text-primary);
+    outline-offset: 3px;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+html {
+    scrollbar-color: var(--border-color) var(--bg-secondary);
+    scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 0;
+
+    &:hover {
+        background: var(--text-secondary);
+    }
+}
+
+.Toastify__toast-container {
+    font-family: var(--font-sans);
+}
+
+.actualite-toast.Toastify__toast {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+    box-shadow: var(--shadow-md);
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.4;
+    min-height: 0;
+}
+
+.actualite-toast.Toastify__toast--success {
+    border-left: 3px solid var(--success);
+}
+
+.actualite-toast.Toastify__toast--error {
+    border-left: 3px solid var(--error);
+}
+
+.actualite-toast.Toastify__toast--warning {
+    border-left: 3px solid var(--warning);
+}
+
+.actualite-toast.Toastify__toast--info {
+    border-left: 3px solid var(--info);
+}
+
+.actualite-toast .Toastify__close-button {
+    color: var(--text-secondary);
+    opacity: 0.7;
+
+    &:hover {
+        opacity: 1;
+        color: var(--text-primary);
+    }
+}
