@@ -2,6 +2,7 @@ package post_repository
 
 import (
 	"actualiteco/actualite/internal/core/domain"
+	postgres_pool "actualiteco/actualite/internal/core/repository/postgres"
 	"context"
 	"fmt"
 	"uuid"
@@ -12,6 +13,8 @@ import (
 func (r *PostsRepository) GetReplies(ctx context.Context, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
+
+	conn := postgres_pool.ExecutorFromContext(ctx, r.ConnPool)
 
 	query := `
 		SELECT p.id::uuid, p.user_id::uuid, u.username, u.display_name, u.avatar_url,
@@ -25,7 +28,7 @@ func (r *PostsRepository) GetReplies(ctx context.Context, parentID uuid.UUID, li
 		LIMIT $3;
 	`
 
-	rows, err := r.ConnPool.Query(ctxTimeout, query, parentID, offset, limit)
+	rows, err := conn.Query(ctxTimeout, query, parentID, offset, limit)
 	if err != nil {
 		return nil, fmt.Errorf("query posts by user id: %w", err)
 	}

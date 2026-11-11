@@ -1,6 +1,7 @@
 package post_repository
 
 import (
+	postgres_pool "actualiteco/actualite/internal/core/repository/postgres"
 	"context"
 	"fmt"
 	"uuid"
@@ -10,13 +11,15 @@ func (r *PostsRepository) GetCountOfReplies(ctx context.Context, parentID uuid.U
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
+	conn := postgres_pool.ExecutorFromContext(ctx, r.ConnPool)
+
 	query := `
 		SELECT
 			(SELECT COUNT(*) FROM posts WHERE parent_id = $1) AS replies_count,
 			EXISTS(SELECT 1 FROM posts WHERE id = $1) AS post_exists;
 	`
 
-	row := r.ConnPool.QueryRow(ctxTimeout, query, parentID)
+	row := conn.QueryRow(ctxTimeout, query, parentID)
 
 	var count uint64
 	var postExists bool

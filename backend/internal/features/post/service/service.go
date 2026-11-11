@@ -8,6 +8,7 @@ import (
 
 type PostsService struct {
 	postsRepo PostsRepository
+	txManager txManager
 }
 
 type PostsRepository interface {
@@ -20,8 +21,13 @@ type PostsRepository interface {
 	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, bool, error)
 }
 
-func New(postsRepo PostsRepository) *PostsService {
+type txManager interface {
+	Do(ctx context.Context, fn func(ctx context.Context) error) error
+}
+
+func New(postsRepo PostsRepository, txManager txManager) *PostsService {
 	return &PostsService{
 		postsRepo: postsRepo,
+		txManager: txManager,
 	}
 }

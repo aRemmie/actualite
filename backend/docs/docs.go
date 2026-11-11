@@ -241,7 +241,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Посты найдены",
+                        "description": "Все комментарии возвращены (если под постом нет комментариев - будет пустой массив)",
                         "schema": {
                             "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
                         }
@@ -259,7 +259,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "У поста нет комментариев",
+                        "description": "Пост не был найден",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
@@ -546,7 +546,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Посты найдены",
+                        "description": "Все существующие посты возвращены (если у пользователя нет постов - будет пустой массив)",
                         "schema": {
                             "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
                         }
@@ -564,7 +564,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "У пользователя нет постов",
+                        "description": "Пользователь не найден",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }

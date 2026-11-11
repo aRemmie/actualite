@@ -19,10 +19,10 @@ import (
 // @Param postID path string true "Post ID (UUID)" Format(uuid) Example(a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d)
 // @Param page query int false "Номер страницы"  minimum(1)  default(1)
 // @Param page_size query int false "Размер страницы"  minimum(1)  maximum(30)  default(20)
-// @Success 200 {object} PostsWithPaginationDTOResponse "Посты найдены"
+// @Success 200 {object} PostsWithPaginationDTOResponse "Все комментарии возвращены (если под постом нет комментариев - будет пустой массив)"
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
 // @Failure 401 {object} domain.CustomError "Неверные учетные данные"
-// @Failure 404 {object} domain.CustomError "У поста нет комментариев"
+// @Failure 404 {object} domain.CustomError "Пост не был найден"
 // @Failure 500 {object} domain.InternalError "Внутренняя ошибка сервера"
 // @Router /posts/{postID}/replies [get]
 // @Security BearerAuth
