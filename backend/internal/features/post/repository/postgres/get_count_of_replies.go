@@ -15,8 +15,8 @@ func (r *PostsRepository) GetCountOfReplies(ctx context.Context, parentID uuid.U
 
 	query := `
 		SELECT
-			(SELECT COUNT(*) FROM posts WHERE parent_id = $1) AS replies_count,
-			EXISTS(SELECT 1 FROM posts WHERE id = $1) AS post_exists;
+			(SELECT COUNT(*) FROM posts WHERE parent_id = $1 AND deleted_at IS NULL) AS replies_count,
+			EXISTS(SELECT 1 FROM posts WHERE id = $1 AND deleted_at IS NULL) AS post_exists;
 	`
 
 	row := conn.QueryRow(ctxTimeout, query, parentID)

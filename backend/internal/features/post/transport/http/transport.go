@@ -16,8 +16,9 @@ type PostsHTTPHandler struct {
 type PostsService interface {
 	Create(ctx context.Context, userID uuid.UUID, content string, parentID *uuid.UUID, imageURL *string) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
-	GetPostsByUserID(ctx context.Context, userID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
-	GetReplies(ctx context.Context, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
+	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
+	GetReplies(ctx context.Context, userID, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
+	GetPosts(ctx context.Context, userID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
 }
 
 func NewPostsHandler(postsService PostsService) *PostsHTTPHandler {

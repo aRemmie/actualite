@@ -7,7 +7,7 @@ import (
 	"uuid"
 )
 
-func (s *PostsService) GetPostsByUserID(ctx context.Context, userID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
+func (s *PostsService) GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
 	pagination := domain.NewPagination(page, pageSize)
 	offset, limit, err := pagination.GetOffsetLimit()
 	if err != nil {
@@ -16,12 +16,12 @@ func (s *PostsService) GetPostsByUserID(ctx context.Context, userID uuid.UUID, p
 
 	posts := make([]domain.PostWithAuthor, 0)
 	err = s.txManager.Do(ctx, func(ctx context.Context) error {
-		count, userExists, err := s.postsRepo.GetCountOfPostsByUserID(ctx, userID)
+		count, userExists, err := s.postsRepo.GetCountOfPostsByUserID(ctx, authorID)
 		if err != nil {
 			return fmt.Errorf("get count of posts: %w", err)
 		}
 		if !userExists {
-			return fmt.Errorf("no user with id=%s: %w", userID.String(), domain.ErrNotFound)
+			return fmt.Errorf("no user with id=%s: %w", authorID.String(), domain.ErrNotFound)
 		}
 
 		pagination.ParseCount(count)
@@ -30,9 +30,9 @@ func (s *PostsService) GetPostsByUserID(ctx context.Context, userID uuid.UUID, p
 			return nil
 		}
 
-		posts, err = s.postsRepo.GetPostsByUserID(ctx, userID, limit, offset)
+		posts, err = s.postsRepo.GetPostsByAuthorID(ctx, userID, authorID, limit, offset)
 		if err != nil {
-			return fmt.Errorf("get posts by userID: %w", err)
+			return fmt.Errorf("get posts by authorID: %w", err)
 		}
 
 		return nil

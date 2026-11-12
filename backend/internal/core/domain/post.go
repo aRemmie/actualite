@@ -16,6 +16,7 @@ type Post struct {
 	LikesCount uint
 	DeletedAt  *time.Time
 	CreatedAt  time.Time
+	IsLiked    bool
 }
 
 type UserSummary struct {
@@ -26,8 +27,9 @@ type UserSummary struct {
 }
 
 type PostWithAuthor struct {
-	Post   Post
-	Author UserSummary
+	Post    Post
+	Author  UserSummary
+	IsLiked bool
 }
 
 func NewPost(userID uuid.UUID, content string, imageURL *string, parentID *uuid.UUID) (Post, error) {

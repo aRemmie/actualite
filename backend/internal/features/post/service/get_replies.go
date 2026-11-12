@@ -7,7 +7,7 @@ import (
 	"uuid"
 )
 
-func (s *PostsService) GetReplies(ctx context.Context, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
+func (s *PostsService) GetReplies(ctx context.Context, userID, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
 	pagination := domain.NewPagination(page, pageSize)
 	offset, limit, err := pagination.GetOffsetLimit()
 	if err != nil {
@@ -29,7 +29,7 @@ func (s *PostsService) GetReplies(ctx context.Context, postID uuid.UUID, page, p
 			return nil
 		}
 
-		posts, err = s.postsRepo.GetReplies(ctx, postID, limit, offset)
+		posts, err = s.postsRepo.GetReplies(ctx, userID, postID, limit, offset)
 		if err != nil {
 			return fmt.Errorf("get replies: %w", err)
 		}

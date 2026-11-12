@@ -34,6 +34,7 @@ type PostWithAuthorDTOResponse struct {
 	LikesCount  uint       `json:"likes_count" example:"10"`
 	CreatedAt   time.Time  `json:"created_at" example:"2026-03-25T12:00:41.267Z"`
 	DeletedAt   *time.Time `json:"deleted_at" example:"2026-03-25T12:00:41.267Z"`
+	IsLiked     bool       `json:"is_liked" example:"false"`
 }
 
 type paginationDTO struct {
@@ -73,6 +74,7 @@ func postWithAuthorToResponse(p domain.PostWithAuthor) PostWithAuthorDTOResponse
 		LikesCount:  p.Post.LikesCount,
 		CreatedAt:   p.Post.CreatedAt,
 		DeletedAt:   p.Post.DeletedAt,
+		IsLiked:     p.Post.IsLiked,
 	}
 }
 

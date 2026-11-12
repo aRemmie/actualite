@@ -14,8 +14,9 @@ type PostsService struct {
 type PostsRepository interface {
 	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
-	GetPostsByUserID(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
-	GetReplies(ctx context.Context, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetReplies(ctx context.Context, userID, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, uint64, error)
 
 	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
 	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, bool, error)

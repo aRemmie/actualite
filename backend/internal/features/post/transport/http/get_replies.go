@@ -50,9 +50,15 @@ func (h *PostsHTTPHandler) GetReplies(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	userID, err := getUserUUIDFromContext(ctx)
+	if err != nil {
+		respWriter.MapError(err)
+		return
+	}
+
 	log.Debug("getting replies for post", zap.String("postID", postID.String()))
 
-	posts, pagination, err := h.PostsService.GetReplies(ctx, postID, page, pageSize)
+	posts, pagination, err := h.PostsService.GetReplies(ctx, userID, postID, page, pageSize)
 	if err != nil {
 		log.Error("get replies", zap.Error(err))
 		respWriter.MapError(err)

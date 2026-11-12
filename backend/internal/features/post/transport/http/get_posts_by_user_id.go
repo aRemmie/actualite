@@ -43,13 +43,19 @@ func (h *PostsHTTPHandler) GetPostsByUserID(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userID, err := httputils.GetUUIDPathValue(r, "userID")
+	authorID, err := httputils.GetUUIDPathValue(r, "userID")
 	if err != nil {
 		respWriter.MapError(err)
 		return
 	}
 
-	posts, pagination, err := h.PostsService.GetPostsByUserID(ctx, userID, page, pageSize)
+	userID, err := getUserUUIDFromContext(ctx)
+	if err != nil {
+		respWriter.MapError(err)
+		return
+	}
+
+	posts, pagination, err := h.PostsService.GetPostsByAuthorID(ctx, userID, authorID, page, pageSize)
 	if err != nil {
 		log.Error("get posts by user", zap.Error(err))
 		respWriter.MapError(err)
