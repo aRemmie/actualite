@@ -15,7 +15,7 @@ func (r *PostsRepository) GetCountOfPostsByUserID(ctx context.Context, userID uu
 
 	query := `
 		SELECT
-			(SELECT COUNT(*) FROM posts WHERE user_id = $1) AS posts_count,
+			(SELECT COUNT(*) FROM posts WHERE user_id = $1 AND deleted_at IS NULL) AS posts_count,
 			EXISTS(SELECT 1 FROM users WHERE id = $1) AS user_exists;
 	`
 

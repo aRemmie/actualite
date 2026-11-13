@@ -10,7 +10,7 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (r *PostsRepository) GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, uint64, error) {
+func (r *PostsRepository) GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error) {
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
@@ -37,41 +37,36 @@ func (r *PostsRepository) GetPostsFeed(ctx context.Context, userID uuid.UUID, li
 			(uf.author_id IS NOT NULL)       AS from_subscription,
 			EXISTS(
 				SELECT 1 FROM likes l
-				WHERE l.post_id = p.id
-				AND l.user_id = $1
-			)                                AS is_liked,
-			COUNT(*) OVER()                  AS total_count
+				WHERE l.post_id = p.id AND l.user_id = $1
+			)                                AS is_liked
 		FROM posts p
 		JOIN users u              ON u.id         = p.user_id
 		LEFT JOIN user_follows uf ON uf.author_id = p.user_id
 		WHERE p.parent_id IS NULL
 		AND p.deleted_at IS NULL
 		AND (
-			uf.author_id IS NOT NULL
+				uf.author_id IS NOT NULL
 			OR p.created_at >= NOW() - INTERVAL '1 month'
 		)
 		ORDER BY
 			from_subscription DESC,
-			p.likes_count DESC,
+			CASE WHEN uf.author_id IS NOT NULL
+				THEN EXTRACT(EPOCH FROM p.created_at)::bigint
+				ELSE p.likes_count::bigint
+			END DESC,
 			p.id DESC
 		LIMIT $2 OFFSET $3;
 	`
 
 	rows, err := conn.Query(ctxTimeout, query, userID, limit, offset)
 	if err != nil {
-		return []domain.PostWithAuthor{}, 0, fmt.Errorf("get posts feed query: %w", err)
+		return []domain.PostWithAuthor{}, fmt.Errorf("get posts feed query: %w", err)
 	}
 
 	models, err := pgx.CollectRows(rows, pgx.RowToStructByName[PostModel])
 	if err != nil {
-		return []domain.PostWithAuthor{}, 0, fmt.Errorf("collect rows: %w", err)
+		return []domain.PostWithAuthor{}, fmt.Errorf("collect rows: %w", err)
 	}
 
-	if len(models) == 0 {
-		return []domain.PostWithAuthor{}, 0, nil
-	}
-
-	total := models[0].TotalCount
-
-	return toPostWithAuthorDomains(models), total, nil
+	return toPostWithAuthorDomains(models), nil
 }

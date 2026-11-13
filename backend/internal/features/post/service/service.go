@@ -16,10 +16,11 @@ type PostsRepository interface {
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
 	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
 	GetReplies(ctx context.Context, userID, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
-	GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, uint64, error)
+	GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
 
 	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
 	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, bool, error)
+	GetCountOfPostsForFeed(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
 }
 
 type txManager interface {

@@ -31,7 +31,6 @@ type PostModel struct {
 	CreatedAt        time.Time  `db:"created_at"`
 	FromSubscription bool       `db:"from_subscription"`
 	IsLiked          bool       `db:"is_liked"`
-	TotalCount       uint64     `db:"total_count"`
 }
 
 func toPostDomain(m PostModel) domain.Post {
