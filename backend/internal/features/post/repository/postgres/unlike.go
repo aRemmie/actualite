@@ -26,7 +26,7 @@ func (r *PostsRepository) Unlike(ctx context.Context, userID, postID uuid.UUID) 
 	tag, err := executor.Exec(ctx, `DELETE FROM likes WHERE user_id = $1 AND post_id = $2`, userID.String(), postID.String())
 	if err != nil {
 		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
+		if errors.As(err, &pgErr) && pgErr.Code == foreignKeyViolation {
 			return fmt.Errorf("like reference not found: %w", domain.ErrNotFound)
 		}
 		return fmt.Errorf("unlike post: %w", err)

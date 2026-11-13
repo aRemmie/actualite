@@ -11,6 +11,8 @@ import (
 	"uuid"
 )
 
+const foreignKeyViolation = "23503"
+
 func (r *PostsRepository) Like(ctx context.Context, userID, postID uuid.UUID) error {
 	ctx, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
@@ -26,7 +28,7 @@ func (r *PostsRepository) Like(ctx context.Context, userID, postID uuid.UUID) er
 	tag, err := executor.Exec(ctx, `INSERT INTO likes (user_id, post_id) VALUES ($1, $2) ON CONFLICT (user_id, post_id) DO NOTHING`, userID.String(), postID.String())
 	if err != nil {
 		var pgErr *pgconn.PgError
-		if errors.As(err, &pgErr) && pgErr.Code == "23503" {
+		if errors.As(err, &pgErr) && pgErr.Code == foreignKeyViolation {
 			return fmt.Errorf("like reference not found: %w", domain.ErrNotFound)
 		}
 		return fmt.Errorf("like post: %w", err)
