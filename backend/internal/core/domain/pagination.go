@@ -33,8 +33,10 @@ func NewPagination(page, pageSize *uint64) Pagination {
 	}
 
 	return Pagination{
-		Page:     p,
-		PageSize: ps,
+		Page:       p,
+		PageSize:   ps,
+		Total:      0,
+		TotalPages: 0,
 	}
 }
 

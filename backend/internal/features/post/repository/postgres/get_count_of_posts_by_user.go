@@ -1,6 +1,7 @@
 package post_repository
 
 import (
+	postgres_pool "actualiteco/actualite/internal/core/repository/postgres"
 	"context"
 	"fmt"
 	"uuid"
@@ -10,13 +11,15 @@ func (r *PostsRepository) GetCountOfPostsByUserID(ctx context.Context, userID uu
 	ctxTimeout, cancel := context.WithTimeout(ctx, r.ConnPool.OpTimeout())
 	defer cancel()
 
+	conn := postgres_pool.ExecutorFromContext(ctx, r.ConnPool)
+
 	query := `
 		SELECT
-			(SELECT COUNT(*) FROM posts WHERE user_id = $1) AS posts_count,
+			(SELECT COUNT(*) FROM posts WHERE user_id = $1 AND deleted_at IS NULL) AS posts_count,
 			EXISTS(SELECT 1 FROM users WHERE id = $1) AS user_exists;
 	`
 
-	row := r.ConnPool.QueryRow(ctxTimeout, query, userID)
+	row := conn.QueryRow(ctxTimeout, query, userID)
 
 	var count uint64
 	var userExists bool

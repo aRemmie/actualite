@@ -153,6 +153,9 @@ definitions:
       image_url:
         example: https://example.com/image.jpg
         type: string
+      is_liked:
+        example: false
+        type: boolean
       likes_count:
         example: 10
         type: integer
@@ -284,6 +287,51 @@ paths:
       summary: Авторизация по email и паролю
       tags:
       - Auth
+  /posts:
+    get:
+      consumes:
+      - application/json
+      description: Возвращаются посты подписок пользователя и посты за последний месяц
+        (отсортированные по количеству лайков) поддержкой пагинации через параметры
+        page и page_size
+      parameters:
+      - default: 1
+        description: Номер страницы
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 20
+        description: Размер страницы
+        in: query
+        maximum: 30
+        minimum: 1
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Посты возвращены
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse'
+        "400":
+          description: Неверный запрос
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Неверные учетные данные
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
+      summary: Возвращает посты для ленты
+      tags:
+      - Posts
   /posts/{postID}:
     get:
       consumes:
@@ -357,7 +405,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: Посты найдены
+          description: Все комментарии возвращены (если под постом нет комментариев
+            - будет пустой массив)
           schema:
             $ref: '#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse'
         "400":
@@ -369,7 +418,7 @@ paths:
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
         "404":
-          description: У поста нет комментариев
+          description: Пост не был найден
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
         "500":
@@ -568,7 +617,8 @@ paths:
       - application/json
       responses:
         "200":
-          description: Посты найдены
+          description: Все существующие посты возвращены (если у пользователя нет
+            постов - будет пустой массив)
           schema:
             $ref: '#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse'
         "400":
@@ -580,7 +630,7 @@ paths:
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
         "404":
-          description: У пользователя нет постов
+          description: Пользователь не найден
           schema:
             $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
         "500":

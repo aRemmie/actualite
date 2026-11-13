@@ -19,10 +19,10 @@ import (
 // @Param userID path string true "User ID (UUID)" Format(uuid) Example(3fa85f64-5717-4562-b3fc-2c963f66afa6)
 // @Param page query int false "Номер страницы"  minimum(1)  default(1)
 // @Param page_size query int false "Размер страницы"  minimum(1)  maximum(30)  default(20)
-// @Success 200 {object} PostsWithPaginationDTOResponse "Посты найдены"
+// @Success 200 {object} PostsWithPaginationDTOResponse "Все существующие посты возвращены (если у пользователя нет постов - будет пустой массив)"
 // @Failure 400 {object} domain.CustomError "Неверный запрос"
 // @Failure 401 {object} domain.CustomError "Неверные учетные данные"
-// @Failure 404 {object} domain.CustomError "У пользователя нет постов"
+// @Failure 404 {object} domain.CustomError "Пользователь не найден"
 // @Failure 500 {object} domain.InternalError "Внутренняя ошибка сервера"
 // @Router /profile/{userID}/posts [get]
 // @Security BearerAuth
@@ -43,13 +43,19 @@ func (h *PostsHTTPHandler) GetPostsByUserID(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	userID, err := httputils.GetUUIDPathValue(r, "userID")
+	authorID, err := httputils.GetUUIDPathValue(r, "userID")
 	if err != nil {
 		respWriter.MapError(err)
 		return
 	}
 
-	posts, pagination, err := h.PostsService.GetPostsByUserID(ctx, userID, page, pageSize)
+	userID, err := getUserUUIDFromContext(ctx)
+	if err != nil {
+		respWriter.MapError(err)
+		return
+	}
+
+	posts, pagination, err := h.PostsService.GetPostsByAuthorID(ctx, userID, authorID, page, pageSize)
 	if err != nil {
 		log.Error("get posts by user", zap.Error(err))
 		respWriter.MapError(err)

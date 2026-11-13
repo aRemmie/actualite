@@ -52,6 +52,9 @@ func main() {
 	}
 	defer pool.Close()
 
+	log.Debug("initializing tx manager")
+	txManager := postgres_pool.NewTxManager(pool)
+
 	serv := server.NewHTTPServer(server.NewConfigMust(), log)
 	serv.RegisterSwagger()
 
@@ -66,7 +69,7 @@ func main() {
 
 	log.Debug("initializing post service")
 	postRepository := post_repository.New(pool)
-	postService := post_service.New(postRepository)
+	postService := post_service.New(postRepository, txManager)
 	postHandler := post_transport.NewPostsHandler(postService)
 
 	serv.RegisterRoutes(authHandler, profileHandler, postHandler)

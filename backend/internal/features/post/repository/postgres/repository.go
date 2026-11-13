@@ -18,17 +18,19 @@ func New(connPool postgres_pool.Pool) *PostsRepository {
 }
 
 type PostModel struct {
-	ID          uuid.UUID  `db:"id"`
-	UserID      uuid.UUID  `db:"user_id"`
-	Username    string     `db:"username"`
-	DisplayName *string    `db:"display_name"`
-	AvatarURL   *string    `db:"avatar_url"`
-	ParentID    *uuid.UUID `db:"parent_id"`
-	Content     string     `db:"content"`
-	ImageURL    *string    `db:"image_url"`
-	LikesCount  uint       `db:"likes_count"`
-	DeletedAt   *time.Time `db:"deleted_at"`
-	CreatedAt   time.Time  `db:"created_at"`
+	ID               uuid.UUID  `db:"id"`
+	UserID           uuid.UUID  `db:"user_id"`
+	Username         string     `db:"username"`
+	DisplayName      *string    `db:"display_name"`
+	AvatarURL        *string    `db:"avatar_url"`
+	ParentID         *uuid.UUID `db:"parent_id"`
+	Content          string     `db:"content"`
+	ImageURL         *string    `db:"image_url"`
+	LikesCount       uint       `db:"likes_count"`
+	DeletedAt        *time.Time `db:"deleted_at"`
+	CreatedAt        time.Time  `db:"created_at"`
+	FromSubscription bool       `db:"from_subscription"`
+	IsLiked          bool       `db:"is_liked"`
 }
 
 func toPostDomain(m PostModel) domain.Post {
@@ -40,6 +42,7 @@ func toPostDomain(m PostModel) domain.Post {
 		ImageURL:   m.ImageURL,
 		LikesCount: m.LikesCount,
 		CreatedAt:  m.CreatedAt,
+		IsLiked:    m.IsLiked,
 	}
 }
 

@@ -7,30 +7,37 @@ import (
 	"uuid"
 )
 
-// TODO: wrap in transaction
-func (s *PostsService) GetReplies(ctx context.Context, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
+func (s *PostsService) GetReplies(ctx context.Context, userID, postID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error) {
 	pagination := domain.NewPagination(page, pageSize)
 	offset, limit, err := pagination.GetOffsetLimit()
 	if err != nil {
 		return nil, domain.Pagination{}, fmt.Errorf("get offset and limit: %w", err)
 	}
 
-	count, postExists, err := s.postsRepo.GetCountOfReplies(ctx, postID)
-	if err != nil {
-		return nil, domain.Pagination{}, fmt.Errorf("get count of posts: %w", err)
-	}
-	if !postExists {
-		return nil, domain.Pagination{}, fmt.Errorf("no post with id=%s: %w", postID.String(), domain.ErrNotFound)
-	}
-	if count == 0 {
-		return nil, domain.Pagination{}, fmt.Errorf("no replies for post with id=%s: %w", postID.String(), domain.ErrNotFound)
-	}
+	posts := make([]domain.PostWithAuthor, 0)
+	err = s.txManager.Do(ctx, func(ctx context.Context) error {
+		count, postExists, err := s.postsRepo.GetCountOfReplies(ctx, postID)
+		if err != nil {
+			return fmt.Errorf("get count of posts: %w", err)
+		}
+		if !postExists {
+			return fmt.Errorf("no post with id=%s: %w", postID.String(), domain.ErrNotFound)
+		}
 
-	pagination.ParseCount(count)
+		pagination.ParseCount(count)
+		if count == 0 {
+			return nil
+		}
 
-	posts, err := s.postsRepo.GetReplies(ctx, postID, limit, offset)
+		posts, err = s.postsRepo.GetReplies(ctx, userID, postID, limit, offset)
+		if err != nil {
+			return fmt.Errorf("get replies: %w", err)
+		}
+
+		return nil
+	})
 	if err != nil {
-		return nil, domain.Pagination{}, fmt.Errorf("get replies: %w", err)
+		return nil, domain.Pagination{}, err
 	}
 
 	return posts, pagination, nil

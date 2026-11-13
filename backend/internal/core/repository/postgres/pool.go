@@ -14,6 +14,7 @@ type Pool interface {
 	QueryRow(ctx context.Context, sql string, args ...any) pgx.Row
 	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 	Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error)
+	BeginTx(ctx context.Context, txOptions pgx.TxOptions) (pgx.Tx, error)
 
 	OpTimeout() time.Duration
 }
@@ -39,6 +40,7 @@ func NewConnectionPool(ctx context.Context, cfg Config) (*ConnectionPool, error)
 	}
 
 	if err = pool.Ping(ctx); err != nil {
+		pool.Close()
 		return nil, fmt.Errorf("failed to connect postgres database: %w", err)
 	}
 
@@ -58,6 +60,12 @@ func (p *ConnectionPool) Query(ctx context.Context, sql string, args ...any) (pg
 
 func (p *ConnectionPool) Exec(ctx context.Context, sql string, args ...any) (pgconn.CommandTag, error) {
 	return p.Pool.Exec(ctx, sql, args...)
+}
+
+func (p *ConnectionPool) BeginTx(ctx context.Context, txOptions pgx.TxOptions) (pgx.Tx, error) {
+	ctx, cancel := context.WithTimeout(ctx, p.OpTimeout())
+	defer cancel()
+	return p.Pool.BeginTx(ctx, txOptions)
 }
 
 func (p *ConnectionPool) OpTimeout() time.Duration {

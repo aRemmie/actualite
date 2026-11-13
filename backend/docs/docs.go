@@ -67,6 +67,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/posts": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Возвращаются посты подписок пользователя и посты за последний месяц (отсортированные по количеству лайков) поддержкой пагинации через параметры page и page_size",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Posts"
+                ],
+                "summary": "Возвращает посты для ленты",
+                "parameters": [
+                    {
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 1,
+                        "description": "Номер страницы",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "maximum": 30,
+                        "minimum": 1,
+                        "type": "integer",
+                        "default": 20,
+                        "description": "Размер страницы",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Посты возвращены",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный запрос",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Неверные учетные данные",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка сервера",
+                        "schema": {
+                            "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.InternalError"
+                        }
+                    }
+                }
+            }
+        },
         "/posts/create": {
             "post": {
                 "security": [
@@ -241,7 +306,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Посты найдены",
+                        "description": "Все комментарии возвращены (если под постом нет комментариев - будет пустой массив)",
                         "schema": {
                             "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
                         }
@@ -259,7 +324,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "У поста нет комментариев",
+                        "description": "Пост не был найден",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
@@ -546,7 +611,7 @@ const docTemplate = `{
                 ],
                 "responses": {
                     "200": {
-                        "description": "Посты найдены",
+                        "description": "Все существующие посты возвращены (если у пользователя нет постов - будет пустой массив)",
                         "schema": {
                             "$ref": "#/definitions/internal_features_post_transport_http.PostsWithPaginationDTOResponse"
                         }
@@ -564,7 +629,7 @@ const docTemplate = `{
                         }
                     },
                     "404": {
-                        "description": "У пользователя нет постов",
+                        "description": "Пользователь не найден",
                         "schema": {
                             "$ref": "#/definitions/actualiteco_actualite_internal_core_domain.CustomError"
                         }
@@ -890,6 +955,10 @@ const docTemplate = `{
                 "image_url": {
                     "type": "string",
                     "example": "https://example.com/image.jpg"
+                },
+                "is_liked": {
+                    "type": "boolean",
+                    "example": false
                 },
                 "likes_count": {
                     "type": "integer",

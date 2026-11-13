@@ -8,20 +8,28 @@ import (
 
 type PostsService struct {
 	postsRepo PostsRepository
+	txManager txManager
 }
 
 type PostsRepository interface {
 	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
-	GetPostsByUserID(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
-	GetReplies(ctx context.Context, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetReplies(ctx context.Context, userID, parentID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
+	GetPostsFeed(ctx context.Context, userID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
 
 	GetCountOfPostsByUserID(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
 	GetCountOfReplies(ctx context.Context, parentID uuid.UUID) (uint64, bool, error)
+	GetCountOfPostsForFeed(ctx context.Context, userID uuid.UUID) (uint64, bool, error)
 }
 
-func New(postsRepo PostsRepository) *PostsService {
+type txManager interface {
+	Do(ctx context.Context, fn func(ctx context.Context) error) error
+}
+
+func New(postsRepo PostsRepository, txManager txManager) *PostsService {
 	return &PostsService{
 		postsRepo: postsRepo,
+		txManager: txManager,
 	}
 }
