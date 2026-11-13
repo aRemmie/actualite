@@ -28,14 +28,20 @@ func NewTxManager(pool Pool) *TxManager {
 }
 
 func (tm *TxManager) Do(ctx context.Context, fn func(ctx context.Context) error) error {
+	return tm.do(ctx, fn, pgx.TxOptions{IsoLevel: pgx.RepeatableRead, AccessMode: pgx.ReadOnly})
+}
+
+// DoWrite runs mutations atomically, serializing concurrent updates through row locks.
+func (tm *TxManager) DoWrite(ctx context.Context, fn func(context.Context) error) error {
+	return tm.do(ctx, fn, pgx.TxOptions{IsoLevel: pgx.ReadCommitted, AccessMode: pgx.ReadWrite})
+}
+
+func (tm *TxManager) do(ctx context.Context, fn func(context.Context) error, options pgx.TxOptions) error {
 	if _, ok := ctx.Value(txKey).(pgx.Tx); ok {
 		return fn(ctx)
 	}
 
-	tx, err := tm.pool.BeginTx(ctx, pgx.TxOptions{
-		IsoLevel:   pgx.RepeatableRead,
-		AccessMode: pgx.ReadOnly,
-	})
+	tx, err := tm.pool.BeginTx(ctx, options)
 	if err != nil {
 		return fmt.Errorf("begin tx: %w", err)
 	}

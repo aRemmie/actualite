@@ -14,6 +14,8 @@ type PostsHTTPHandler struct {
 }
 
 type PostsService interface {
+	Like(ctx context.Context, userID, postID uuid.UUID) error
+	Unlike(ctx context.Context, userID, postID uuid.UUID) error
 	Create(ctx context.Context, userID uuid.UUID, content string, parentID *uuid.UUID, imageURL *string) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
 	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, page, pageSize *uint64) ([]domain.PostWithAuthor, domain.Pagination, error)
@@ -29,6 +31,18 @@ func NewPostsHandler(postsService PostsService) *PostsHTTPHandler {
 
 func (h *PostsHTTPHandler) Routes() []server.Route {
 	return []server.Route{
+		{
+			Method:               http.MethodPost,
+			URL:                  "/posts/{postID}/like",
+			Handler:              h.Like,
+			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
+		},
+		{
+			Method:               http.MethodPost,
+			URL:                  "/posts/{postID}/unlike",
+			Handler:              h.Unlike,
+			AdditionalMiddleware: []middleware.Middleware{middleware.AuthMiddleware()},
+		},
 		{
 			Method:               http.MethodPost,
 			URL:                  "/posts/create",

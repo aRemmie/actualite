@@ -106,6 +106,11 @@ definitions:
     required:
     - content
     type: object
+  internal_features_post_transport_http.LikeResponse:
+    properties:
+      message:
+        type: string
+    type: object
   internal_features_post_transport_http.PostDTOResponse:
     properties:
       content:
@@ -374,6 +379,45 @@ paths:
       summary: Поиск поста по ID
       tags:
       - Posts
+  /posts/{postID}/like:
+    post:
+      consumes:
+      - application/json
+      description: Like a post as the authenticated user, including their own posts.
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.LikeResponse'
+        "400":
+          description: Invalid post ID or like state
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "404":
+          description: Post not found
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
+      summary: Like a post
+      tags:
+      - Posts
   /posts/{postID}/replies:
     get:
       consumes:
@@ -428,6 +472,45 @@ paths:
       security:
       - BearerAuth: []
       summary: Поиск комментариев на пост
+      tags:
+      - Posts
+  /posts/{postID}/unlike:
+    post:
+      consumes:
+      - application/json
+      description: Unlike a post as the authenticated user, including their own posts.
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: '#/definitions/internal_features_post_transport_http.LikeResponse'
+        "400":
+          description: Invalid post ID or like state
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "404":
+          description: Post not found
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.CustomError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/actualiteco_actualite_internal_core_domain.InternalError'
+      security:
+      - BearerAuth: []
+      summary: Unlike a post
       tags:
       - Posts
   /posts/create:

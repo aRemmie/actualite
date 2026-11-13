@@ -12,6 +12,8 @@ type PostsService struct {
 }
 
 type PostsRepository interface {
+	Like(ctx context.Context, userID, postID uuid.UUID) error
+	Unlike(ctx context.Context, userID, postID uuid.UUID) error
 	CreatePost(ctx context.Context, post domain.Post) (domain.Post, error)
 	GetPostByID(ctx context.Context, postID uuid.UUID) (domain.PostWithAuthor, error)
 	GetPostsByAuthorID(ctx context.Context, userID, authorID uuid.UUID, limit, offset uint64) ([]domain.PostWithAuthor, error)
@@ -24,6 +26,7 @@ type PostsRepository interface {
 }
 
 type txManager interface {
+	DoWrite(ctx context.Context, fn func(context.Context) error) error
 	Do(ctx context.Context, fn func(ctx context.Context) error) error
 }
 
